@@ -13,9 +13,10 @@ api.interceptors.response.use(
   (res) => res,
   (err) => {
     if (err.response?.status === 401) {
+      const mode = localStorage.getItem('auth_mode');
       localStorage.removeItem('token');
-      localStorage.removeItem('user');
-      window.location.href = '/login';
+      localStorage.removeItem('auth_mode');
+      window.location.href = mode === 'client' ? '/cliente/login' : '/login';
     }
     return Promise.reject(err);
   }
@@ -201,3 +202,66 @@ export const updateReferralStatus = (id: number, data: any) => api.put(`/admin-f
 // Branding
 export const getBranding = () => api.get('/branding');
 export const updateBranding = (data: any) => api.put('/branding', data);
+
+// ============================================
+// CLIENT PORTAL API (Mobile endpoints)
+// ============================================
+
+// Client Auth
+export const clientLogin = (email: string, password: string) => api.post('/mobile/login', { email, password });
+export const clientRegister = (data: any) => api.post('/mobile/register', data);
+
+// Client Profile
+export const getClientPortalProfile = () => api.get('/mobile/profile');
+export const updateClientPortalProfile = (data: any) => api.put('/mobile/profile', data);
+
+// Client Contracts
+export const getClientContracts = () => api.get('/mobile/contracts');
+export const getClientContract = (id: number) => api.get(`/mobile/contracts/${id}`);
+export const signClientContract = (id: number, data: any) => api.put(`/mobile/contracts/${id}/sign`, data);
+
+// Client Payments
+export const getClientPayments = () => api.get('/mobile/payments');
+export const getClientPaymentInvoice = (id: number) => api.get(`/mobile/payments/${id}/invoice`, { responseType: 'blob' });
+
+// Client Maintenance Requests
+export const getClientRequests = () => api.get('/mobile/requests');
+export const createClientRequest = (data: any) => api.post('/mobile/requests', data);
+
+// Client Messages
+export const getClientMessages = () => api.get('/mobile/messages');
+export const sendClientMessage = (data: any) => api.post('/mobile/messages', data);
+export const markClientMessageRead = (id: number) => api.put(`/mobile/messages/${id}/read`);
+
+// Client Property
+export const getClientProperty = () => api.get('/mobile/property');
+
+// Client Documents
+export const getClientDocuments = () => api.get('/mobile/documents');
+export const uploadClientDocument = (file: File) => {
+  const formData = new FormData();
+  formData.append('file', file);
+  return api.post('/mobile/documents/upload', formData, { headers: { 'Content-Type': 'multipart/form-data' } });
+};
+
+// Client Alerts
+export const getClientAlerts = () => api.get('/mobile/alerts');
+
+// Client News & FAQ
+export const getClientNews = () => api.get('/mobile/news');
+export const getClientFaq = () => api.get('/mobile/faq');
+
+// Client Rewards
+export const getClientRewards = () => api.get('/mobile/rewards');
+
+// Client Check-in
+export const clientCheckin = (data: any) => api.post('/mobile/checkin', data);
+export const getClientCheckinHistory = () => api.get('/mobile/checkin/history');
+
+// Client Reviews
+export const submitClientReview = (data: any) => api.post('/mobile/reviews', data);
+export const getClientReviews = () => api.get('/mobile/reviews');
+
+// Client Referrals
+export const submitClientReferral = (data: any) => api.post('/mobile/referrals', data);
+export const getClientReferrals = () => api.get('/mobile/referrals');

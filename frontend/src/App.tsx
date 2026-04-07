@@ -2,6 +2,7 @@ import React from 'react';
 import { Routes, Route, Navigate } from 'react-router-dom';
 import { useAuth } from './contexts/AuthContext';
 import Layout from './components/Layout';
+import ClientLayout from './components/ClientLayout';
 import ErrorBoundary from './components/ErrorBoundary';
 import Login from './pages/Login';
 import Dashboard from './pages/Dashboard';
@@ -12,7 +13,7 @@ import Properties from './pages/Properties';
 import PropertyProfile from './pages/PropertyProfile';
 import Ranking from './pages/Ranking';
 import Clients from './pages/Clients';
-import ClientProfile from './pages/ClientProfile';
+import ClientProfileAdmin from './pages/ClientProfile';
 import Contracts from './pages/Contracts';
 import Documents from './pages/Documents';
 import Alerts from './pages/Alerts';
@@ -40,19 +41,59 @@ import AdminFaq from './pages/AdminFaq';
 import AdminReferrals from './pages/AdminReferrals';
 import BrandingPage from './pages/BrandingPage';
 
+// Client Portal Pages
+import ClientLogin from './pages/client/ClientLogin';
+import ClientDashboard from './pages/client/ClientDashboard';
+import ClientContracts from './pages/client/ClientContracts';
+import ClientPayments from './pages/client/ClientPayments';
+import ClientRequests from './pages/client/ClientRequests';
+import ClientMessages from './pages/client/ClientMessages';
+import ClientProfilePage from './pages/client/ClientProfile';
+import ClientProperty from './pages/client/ClientProperty';
+import ClientDocuments from './pages/client/ClientDocuments';
+import ClientNews from './pages/client/ClientNews';
+import ClientRewards from './pages/client/ClientRewards';
+import ClientFaq from './pages/client/ClientFaq';
+
 function ProtectedRoute({ children }: { children: React.ReactNode }) {
-  const { user, loading } = useAuth();
+  const { user, loading, isClient } = useAuth();
   if (loading) return <div className="flex items-center justify-center h-screen text-gray-400">Carregando...</div>;
   if (!user) return <Navigate to="/login" />;
+  if (isClient) return <Navigate to="/cliente" />;
   return <Layout>{children}</Layout>;
+}
+
+function ClientRoute({ children }: { children: React.ReactNode }) {
+  const { user, loading, isClient } = useAuth();
+  if (loading) return <div className="flex items-center justify-center h-screen text-gray-400">Carregando...</div>;
+  if (!user) return <Navigate to="/cliente/login" />;
+  if (!isClient) return <Navigate to="/" />;
+  return <ClientLayout>{children}</ClientLayout>;
 }
 
 export default function App() {
   return (
     <ErrorBoundary>
     <Routes>
+      {/* Public routes */}
       <Route path="/login" element={<Login />} />
+      <Route path="/cliente/login" element={<ClientLogin />} />
       <Route path="/sign/:token" element={<PublicSign />} />
+
+      {/* Client Portal routes */}
+      <Route path="/cliente" element={<ClientRoute><ClientDashboard /></ClientRoute>} />
+      <Route path="/cliente/propriedade" element={<ClientRoute><ClientProperty /></ClientRoute>} />
+      <Route path="/cliente/contratos" element={<ClientRoute><ClientContracts /></ClientRoute>} />
+      <Route path="/cliente/pagamentos" element={<ClientRoute><ClientPayments /></ClientRoute>} />
+      <Route path="/cliente/pedidos" element={<ClientRoute><ClientRequests /></ClientRoute>} />
+      <Route path="/cliente/mensagens" element={<ClientRoute><ClientMessages /></ClientRoute>} />
+      <Route path="/cliente/documentos" element={<ClientRoute><ClientDocuments /></ClientRoute>} />
+      <Route path="/cliente/noticias" element={<ClientRoute><ClientNews /></ClientRoute>} />
+      <Route path="/cliente/recompensas" element={<ClientRoute><ClientRewards /></ClientRoute>} />
+      <Route path="/cliente/faq" element={<ClientRoute><ClientFaq /></ClientRoute>} />
+      <Route path="/cliente/perfil" element={<ClientRoute><ClientProfilePage /></ClientRoute>} />
+
+      {/* Admin routes */}
       <Route path="/" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
       <Route path="/entradas" element={<ProtectedRoute><TransactionsIn /></ProtectedRoute>} />
       <Route path="/saidas" element={<ProtectedRoute><TransactionsOut /></ProtectedRoute>} />
@@ -64,7 +105,7 @@ export default function App() {
       <Route path="/propriedades/:id" element={<ProtectedRoute><PropertyProfile /></ProtectedRoute>} />
       <Route path="/ranking" element={<ProtectedRoute><Ranking /></ProtectedRoute>} />
       <Route path="/clientes" element={<ProtectedRoute><Clients /></ProtectedRoute>} />
-      <Route path="/clientes/:id" element={<ProtectedRoute><ClientProfile /></ProtectedRoute>} />
+      <Route path="/clientes/:id" element={<ProtectedRoute><ClientProfileAdmin /></ProtectedRoute>} />
       <Route path="/landlords" element={<ProtectedRoute><Landlords /></ProtectedRoute>} />
       <Route path="/landlords/:id" element={<ProtectedRoute><LandlordProfile /></ProtectedRoute>} />
       <Route path="/rh" element={<ProtectedRoute><HR /></ProtectedRoute>} />
