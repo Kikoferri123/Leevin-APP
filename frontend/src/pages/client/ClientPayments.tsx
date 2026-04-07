@@ -2,6 +2,17 @@ import React, { useEffect, useState } from 'react';
 import { getClientPayments } from '../../services/api';
 import { CreditCard, CheckCircle, Clock, AlertTriangle } from 'lucide-react';
 
+const COLORS = {
+  primary: '#1B4D3E',
+  accent: '#E8B931',
+  success: '#388E3C',
+  error: '#D32F2F',
+  warning: '#F57C00',
+  info: '#1976D2',
+  textPrimary: '#212121',
+  textSecondary: '#757575',
+};
+
 export default function ClientPayments() {
   const [payments, setPayments] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
@@ -19,13 +30,13 @@ export default function ClientPayments() {
   }, []);
 
   const statusIcon = (status: string) => {
-    if (status === 'paid' || status === 'pago') return <span className="flex items-center gap-1 text-green-600"><CheckCircle size={14} />Pago</span>;
-    if (status === 'pending' || status === 'pendente') return <span className="flex items-center gap-1 text-amber-600"><Clock size={14} />Pendente</span>;
-    if (status === 'overdue' || status === 'atrasado') return <span className="flex items-center gap-1 text-red-600"><AlertTriangle size={14} />Atrasado</span>;
-    return <span className="text-gray-500">{status}</span>;
+    if (status === 'paid' || status === 'pago') return <span style={{ display: 'flex', alignItems: 'center', gap: '4px', color: COLORS.success }}><CheckCircle size={14} />Pago</span>;
+    if (status === 'pending' || status === 'pendente') return <span style={{ display: 'flex', alignItems: 'center', gap: '4px', color: COLORS.warning }}><Clock size={14} />Pendente</span>;
+    if (status === 'overdue' || status === 'atrasado') return <span style={{ display: 'flex', alignItems: 'center', gap: '4px', color: COLORS.error }}><AlertTriangle size={14} />Atrasado</span>;
+    return <span style={{ color: COLORS.textSecondary }}>{status}</span>;
   };
 
-  if (loading) return <div className="flex items-center justify-center h-64 text-gray-400">Carregando...</div>;
+  if (loading) return <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '256px', color: COLORS.textSecondary }}>Carregando...</div>;
 
   // Calculate summary
   const totalPaid = payments.filter(p => p.status === 'paid' || p.status === 'pago').reduce((s, p) => s + (p.amount || p.value || 0), 0);
@@ -34,50 +45,50 @@ export default function ClientPayments() {
 
   return (
     <div>
-      <div className="flex items-center gap-3 mb-6">
-        <CreditCard size={24} className="text-emerald-600" />
-        <h1 className="text-2xl font-bold text-gray-800">Meus Pagamentos</h1>
+      <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '24px' }}>
+        <CreditCard size={24} style={{ color: COLORS.primary }} />
+        <h1 style={{ fontSize: '22px', fontWeight: 700, color: COLORS.textPrimary, fontFamily: "'Poppins', 'Inter', sans-serif" }}>Meus Pagamentos</h1>
       </div>
 
       {/* Summary cards */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
-        <div className="bg-white rounded-xl p-4 shadow-sm border border-gray-100">
-          <p className="text-sm text-gray-500">Total Pago</p>
-          <p className="text-xl font-bold text-green-600">EUR {totalPaid.toFixed(2)}</p>
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))', gap: '16px', marginBottom: '24px' }}>
+        <div style={{ background: 'white', borderRadius: '16px', padding: '16px', border: '1px solid #EEEEEE' }}>
+          <p style={{ fontSize: '14px', color: COLORS.textSecondary }}>Total Pago</p>
+          <p style={{ fontSize: '18px', fontWeight: 700, color: COLORS.success }}>EUR {totalPaid.toFixed(2)}</p>
         </div>
-        <div className="bg-white rounded-xl p-4 shadow-sm border border-gray-100">
-          <p className="text-sm text-gray-500">Pendente</p>
-          <p className="text-xl font-bold text-amber-600">EUR {totalPending.toFixed(2)}</p>
+        <div style={{ background: 'white', borderRadius: '16px', padding: '16px', border: '1px solid #EEEEEE' }}>
+          <p style={{ fontSize: '14px', color: COLORS.textSecondary }}>Pendente</p>
+          <p style={{ fontSize: '18px', fontWeight: 700, color: COLORS.warning }}>EUR {totalPending.toFixed(2)}</p>
         </div>
-        <div className="bg-white rounded-xl p-4 shadow-sm border border-gray-100">
-          <p className="text-sm text-gray-500">Atrasado</p>
-          <p className="text-xl font-bold text-red-600">EUR {totalOverdue.toFixed(2)}</p>
+        <div style={{ background: 'white', borderRadius: '16px', padding: '16px', border: '1px solid #EEEEEE' }}>
+          <p style={{ fontSize: '14px', color: COLORS.textSecondary }}>Atrasado</p>
+          <p style={{ fontSize: '18px', fontWeight: 700, color: COLORS.error }}>EUR {totalOverdue.toFixed(2)}</p>
         </div>
       </div>
 
       {payments.length === 0 ? (
-        <div className="bg-white rounded-xl p-8 text-center shadow-sm border border-gray-100">
-          <CreditCard size={48} className="text-gray-300 mx-auto mb-3" />
-          <p className="text-gray-500">Nenhum pagamento encontrado</p>
+        <div style={{ background: 'white', borderRadius: '16px', padding: '32px', textAlign: 'center', border: '1px solid #EEEEEE' }}>
+          <CreditCard size={48} style={{ color: '#D0D0D0', margin: '0 auto 12px' }} />
+          <p style={{ color: COLORS.textSecondary }}>Nenhum pagamento encontrado</p>
         </div>
       ) : (
-        <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
-          <table className="w-full text-sm">
-            <thead className="bg-gray-50 border-b">
+        <div style={{ background: 'white', borderRadius: '16px', border: '1px solid #EEEEEE', overflow: 'hidden' }}>
+          <table style={{ width: '100%', fontSize: '14px' }}>
+            <thead style={{ background: '#F5F5F0', borderBottom: `1px solid #EEEEEE` }}>
               <tr>
-                <th className="text-left px-4 py-3 font-medium text-gray-600">Data</th>
-                <th className="text-left px-4 py-3 font-medium text-gray-600">Descricao</th>
-                <th className="text-right px-4 py-3 font-medium text-gray-600">Valor</th>
-                <th className="text-center px-4 py-3 font-medium text-gray-600">Status</th>
+                <th style={{ textAlign: 'left', padding: '12px 16px', fontWeight: 500, color: COLORS.textSecondary }}>Data</th>
+                <th style={{ textAlign: 'left', padding: '12px 16px', fontWeight: 500, color: COLORS.textSecondary }}>Descricao</th>
+                <th style={{ textAlign: 'right', padding: '12px 16px', fontWeight: 500, color: COLORS.textSecondary }}>Valor</th>
+                <th style={{ textAlign: 'center', padding: '12px 16px', fontWeight: 500, color: COLORS.textSecondary }}>Status</th>
               </tr>
             </thead>
-            <tbody className="divide-y">
+            <tbody style={{ borderTop: `1px solid #EEEEEE` }}>
               {payments.map((p: any, i: number) => (
-                <tr key={p.id || i} className="hover:bg-gray-50">
-                  <td className="px-4 py-3">{p.date || p.due_date ? new Date(p.date || p.due_date).toLocaleDateString('pt-BR') : '-'}</td>
-                  <td className="px-4 py-3 text-gray-700">{p.description || p.reference || `Pagamento #${p.id}`}</td>
-                  <td className="px-4 py-3 text-right font-medium">EUR {Number(p.amount || p.value || 0).toFixed(2)}</td>
-                  <td className="px-4 py-3 text-center text-xs">{statusIcon(p.status)}</td>
+                <tr key={p.id || i} style={{ borderBottom: `1px solid #EEEEEE`, background: i % 2 === 0 ? 'white' : '#FAFAF8' }}>
+                  <td style={{ padding: '12px 16px', color: COLORS.textPrimary }}>{p.date || p.due_date ? new Date(p.date || p.due_date).toLocaleDateString('pt-BR') : '-'}</td>
+                  <td style={{ padding: '12px 16px', color: COLORS.textPrimary }}>{p.description || p.reference || `Pagamento #${p.id}`}</td>
+                  <td style={{ padding: '12px 16px', textAlign: 'right', fontWeight: 500, color: COLORS.textPrimary }}>EUR {Number(p.amount || p.value || 0).toFixed(2)}</td>
+                  <td style={{ padding: '12px 16px', textAlign: 'center', fontSize: '12px' }}>{statusIcon(p.status)}</td>
                 </tr>
               ))}
             </tbody>

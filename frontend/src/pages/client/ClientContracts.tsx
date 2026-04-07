@@ -2,6 +2,17 @@ import React, { useEffect, useState } from 'react';
 import { getClientContracts, getClientContract, signClientContract } from '../../services/api';
 import { FileSignature, Eye, CheckCircle, Clock, XCircle } from 'lucide-react';
 
+const COLORS = {
+  primary: '#1B4D3E',
+  accent: '#E8B931',
+  success: '#388E3C',
+  error: '#D32F2F',
+  warning: '#F57C00',
+  info: '#1976D2',
+  textPrimary: '#212121',
+  textSecondary: '#757575',
+};
+
 export default function ClientContracts() {
   const [contracts, setContracts] = useState<any[]>([]);
   const [selected, setSelected] = useState<any>(null);
@@ -39,43 +50,43 @@ export default function ClientContracts() {
   };
 
   const statusBadge = (status: string, signed: boolean) => {
-    if (signed) return <span className="px-2 py-1 text-xs rounded-full bg-green-100 text-green-700 flex items-center gap-1"><CheckCircle size={12} />Assinado</span>;
-    if (status === 'active') return <span className="px-2 py-1 text-xs rounded-full bg-blue-100 text-blue-700 flex items-center gap-1"><Clock size={12} />Ativo</span>;
-    if (status === 'expired') return <span className="px-2 py-1 text-xs rounded-full bg-gray-100 text-gray-600 flex items-center gap-1"><XCircle size={12} />Expirado</span>;
-    return <span className="px-2 py-1 text-xs rounded-full bg-amber-100 text-amber-700">{status}</span>;
+    if (signed) return <span style={{ padding: '6px 8px', fontSize: '12px', borderRadius: '20px', background: `rgba(${parseInt(COLORS.success.slice(1, 3), 16)}, ${parseInt(COLORS.success.slice(3, 5), 16)}, ${parseInt(COLORS.success.slice(5, 7), 16)}, 0.1)`, color: COLORS.success, display: 'flex', alignItems: 'center', gap: '4px' }}><CheckCircle size={12} />Assinado</span>;
+    if (status === 'active') return <span style={{ padding: '6px 8px', fontSize: '12px', borderRadius: '20px', background: `rgba(${parseInt(COLORS.info.slice(1, 3), 16)}, ${parseInt(COLORS.info.slice(3, 5), 16)}, ${parseInt(COLORS.info.slice(5, 7), 16)}, 0.1)`, color: COLORS.info, display: 'flex', alignItems: 'center', gap: '4px' }}><Clock size={12} />Ativo</span>;
+    if (status === 'expired') return <span style={{ padding: '6px 8px', fontSize: '12px', borderRadius: '20px', background: '#F0F0F0', color: COLORS.textSecondary, display: 'flex', alignItems: 'center', gap: '4px' }}><XCircle size={12} />Expirado</span>;
+    return <span style={{ padding: '6px 8px', fontSize: '12px', borderRadius: '20px', background: `rgba(${parseInt(COLORS.warning.slice(1, 3), 16)}, ${parseInt(COLORS.warning.slice(3, 5), 16)}, ${parseInt(COLORS.warning.slice(5, 7), 16)}, 0.1)`, color: COLORS.warning }}>{status}</span>;
   };
 
-  if (loading) return <div className="flex items-center justify-center h-64 text-gray-400">Carregando...</div>;
+  if (loading) return <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '256px', color: COLORS.textSecondary }}>Carregando...</div>;
 
   return (
     <div>
-      <div className="flex items-center gap-3 mb-6">
-        <FileSignature size={24} className="text-emerald-600" />
-        <h1 className="text-2xl font-bold text-gray-800">Meus Contratos</h1>
+      <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '24px' }}>
+        <FileSignature size={24} style={{ color: COLORS.primary }} />
+        <h1 style={{ fontSize: '22px', fontWeight: 700, color: COLORS.textPrimary, fontFamily: "'Poppins', 'Inter', sans-serif" }}>Meus Contratos</h1>
       </div>
 
       {contracts.length === 0 ? (
-        <div className="bg-white rounded-xl p-8 text-center shadow-sm border border-gray-100">
-          <FileSignature size={48} className="text-gray-300 mx-auto mb-3" />
-          <p className="text-gray-500">Nenhum contrato encontrado</p>
+        <div style={{ background: 'white', borderRadius: '16px', padding: '32px', textAlign: 'center', border: '1px solid #EEEEEE' }}>
+          <FileSignature size={48} style={{ color: '#D0D0D0', margin: '0 auto 12px' }} />
+          <p style={{ color: COLORS.textSecondary }}>Nenhum contrato encontrado</p>
         </div>
       ) : (
-        <div className="space-y-4">
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
           {contracts.map((c: any) => (
-            <div key={c.id} className="bg-white rounded-xl p-5 shadow-sm border border-gray-100">
-              <div className="flex items-center justify-between flex-wrap gap-3">
+            <div key={c.id} style={{ background: 'white', borderRadius: '16px', padding: '20px', border: '1px solid #EEEEEE' }}>
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '12px' }}>
                 <div>
-                  <p className="font-semibold text-gray-800">{c.type || 'Contrato'} #{c.id}</p>
-                  {c.property_name && <p className="text-sm text-gray-500">{c.property_name}</p>}
-                  <div className="flex gap-4 mt-2 text-sm text-gray-500">
+                  <p style={{ fontWeight: 600, color: COLORS.textPrimary }}>{c.type || 'Contrato'} #{c.id}</p>
+                  {c.property_name && <p style={{ fontSize: '14px', color: COLORS.textSecondary }}>{c.property_name}</p>}
+                  <div style={{ display: 'flex', gap: '16px', marginTop: '8px', fontSize: '14px', color: COLORS.textSecondary }}>
                     {c.start_date && <span>Inicio: {new Date(c.start_date).toLocaleDateString('pt-BR')}</span>}
                     {c.end_date && <span>Fim: {new Date(c.end_date).toLocaleDateString('pt-BR')}</span>}
-                    {c.value && <span className="font-medium text-gray-700">EUR {Number(c.value).toFixed(2)}</span>}
+                    {c.value && <span style={{ fontWeight: 500, color: COLORS.textPrimary }}>EUR {Number(c.value).toFixed(2)}</span>}
                   </div>
                 </div>
-                <div className="flex items-center gap-3">
+                <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
                   {statusBadge(c.status, c.signed)}
-                  <button onClick={() => viewContract(c.id)} className="px-3 py-1.5 bg-emerald-50 text-emerald-700 rounded-lg text-sm hover:bg-emerald-100 flex items-center gap-1">
+                  <button onClick={() => viewContract(c.id)} style={{ padding: '6px 12px', background: `rgba(${parseInt(COLORS.primary.slice(1, 3), 16)}, ${parseInt(COLORS.primary.slice(3, 5), 16)}, ${parseInt(COLORS.primary.slice(5, 7), 16)}, 0.1)`, color: COLORS.primary, borderRadius: '8px', fontSize: '14px', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '4px', transition: 'background 0.2s' }}>
                     <Eye size={14} /> Ver
                   </button>
                 </div>
@@ -87,26 +98,26 @@ export default function ClientContracts() {
 
       {/* Detail modal */}
       {selected && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-          <div className="bg-white rounded-xl max-w-lg w-full max-h-[80vh] overflow-y-auto p-6">
-            <h2 className="text-xl font-bold mb-4">Contrato #{selected.id}</h2>
-            <div className="space-y-3 text-sm">
-              <div className="flex justify-between"><span className="text-gray-500">Tipo</span><span>{selected.type}</span></div>
-              <div className="flex justify-between"><span className="text-gray-500">Propriedade</span><span>{selected.property_name}</span></div>
-              <div className="flex justify-between"><span className="text-gray-500">Inicio</span><span>{selected.start_date ? new Date(selected.start_date).toLocaleDateString('pt-BR') : '-'}</span></div>
-              <div className="flex justify-between"><span className="text-gray-500">Fim</span><span>{selected.end_date ? new Date(selected.end_date).toLocaleDateString('pt-BR') : '-'}</span></div>
-              <div className="flex justify-between"><span className="text-gray-500">Valor</span><span className="font-medium">EUR {Number(selected.value || 0).toFixed(2)}</span></div>
-              <div className="flex justify-between"><span className="text-gray-500">Status</span>{statusBadge(selected.status, selected.signed)}</div>
-              {selected.notes && <div className="p-3 bg-gray-50 rounded-lg text-gray-600">{selected.notes}</div>}
+        <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.5)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 50, padding: '16px' }}>
+          <div style={{ background: 'white', borderRadius: '16px', maxWidth: '32rem', width: '100%', maxHeight: '80vh', overflowY: 'auto', padding: '24px' }}>
+            <h2 style={{ fontSize: '18px', fontWeight: 700, marginBottom: '16px', color: COLORS.textPrimary }}>Contrato #{selected.id}</h2>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', fontSize: '14px' }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between' }}><span style={{ color: COLORS.textSecondary }}>Tipo</span><span style={{ color: COLORS.textPrimary }}>{selected.type}</span></div>
+              <div style={{ display: 'flex', justifyContent: 'space-between' }}><span style={{ color: COLORS.textSecondary }}>Propriedade</span><span style={{ color: COLORS.textPrimary }}>{selected.property_name}</span></div>
+              <div style={{ display: 'flex', justifyContent: 'space-between' }}><span style={{ color: COLORS.textSecondary }}>Inicio</span><span style={{ color: COLORS.textPrimary }}>{selected.start_date ? new Date(selected.start_date).toLocaleDateString('pt-BR') : '-'}</span></div>
+              <div style={{ display: 'flex', justifyContent: 'space-between' }}><span style={{ color: COLORS.textSecondary }}>Fim</span><span style={{ color: COLORS.textPrimary }}>{selected.end_date ? new Date(selected.end_date).toLocaleDateString('pt-BR') : '-'}</span></div>
+              <div style={{ display: 'flex', justifyContent: 'space-between' }}><span style={{ color: COLORS.textSecondary }}>Valor</span><span style={{ fontWeight: 500, color: COLORS.textPrimary }}>EUR {Number(selected.value || 0).toFixed(2)}</span></div>
+              <div style={{ display: 'flex', justifyContent: 'space-between' }}><span style={{ color: COLORS.textSecondary }}>Status</span>{statusBadge(selected.status, selected.signed)}</div>
+              {selected.notes && <div style={{ padding: '12px', background: '#F5F5F0', borderRadius: '8px', color: COLORS.textSecondary }}>{selected.notes}</div>}
             </div>
-            <div className="flex gap-3 mt-6">
+            <div style={{ display: 'flex', gap: '12px', marginTop: '24px' }}>
               {!selected.signed && (
                 <button onClick={() => handleSign(selected.id)} disabled={signing}
-                  className="flex-1 px-4 py-2 bg-emerald-600 text-white rounded-lg hover:bg-emerald-700 disabled:opacity-50 font-medium">
+                  style={{ flex: 1, padding: '8px 16px', background: `linear-gradient(135deg, ${COLORS.primary} 0%, #2D7A62 100%)`, color: 'white', borderRadius: '8px', border: 'none', cursor: 'pointer', fontWeight: 500, opacity: signing ? 0.5 : 1, transition: 'opacity 0.2s' }}>
                   {signing ? 'Assinando...' : 'Assinar Contrato'}
                 </button>
               )}
-              <button onClick={() => setSelected(null)} className="flex-1 px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200">Fechar</button>
+              <button onClick={() => setSelected(null)} style={{ flex: 1, padding: '8px 16px', background: '#F5F5F0', color: COLORS.textPrimary, borderRadius: '8px', border: 'none', cursor: 'pointer', fontWeight: 500, transition: 'background 0.2s' }}>Fechar</button>
             </div>
           </div>
         </div>

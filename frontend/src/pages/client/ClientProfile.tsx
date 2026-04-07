@@ -3,6 +3,17 @@ import { getClientPortalProfile, updateClientPortalProfile } from '../../service
 import { useAuth } from '../../contexts/AuthContext';
 import { User, Save, CheckCircle } from 'lucide-react';
 
+const COLORS = {
+  primary: '#1B4D3E',
+  accent: '#E8B931',
+  success: '#388E3C',
+  error: '#D32F2F',
+  warning: '#F57C00',
+  info: '#1976D2',
+  textPrimary: '#212121',
+  textSecondary: '#757575',
+};
+
 export default function ClientProfile() {
   const { refreshUser } = useAuth();
   const [profile, setProfile] = useState<any>(null);
@@ -42,54 +53,54 @@ export default function ClientProfile() {
     setSaving(false);
   };
 
-  if (loading) return <div className="flex items-center justify-center h-64 text-gray-400">Carregando...</div>;
+  if (loading) return <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '256px', color: COLORS.textSecondary }}>Carregando...</div>;
 
   return (
-    <div className="max-w-2xl">
-      <div className="flex items-center gap-3 mb-6">
-        <User size={24} className="text-emerald-600" />
-        <h1 className="text-2xl font-bold text-gray-800">Meu Perfil</h1>
+    <div style={{ maxWidth: '512px' }}>
+      <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '24px' }}>
+        <User size={24} style={{ color: COLORS.primary }} />
+        <h1 style={{ fontSize: '22px', fontWeight: 700, color: COLORS.textPrimary, fontFamily: "'Poppins', 'Inter', sans-serif" }}>Meu Perfil</h1>
       </div>
 
-      <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-100">
+      <div style={{ background: 'white', borderRadius: '16px', padding: '24px', border: '1px solid #EEEEEE' }}>
         {saved && (
-          <div className="mb-4 p-3 bg-green-50 border border-green-200 text-green-700 rounded-lg flex items-center gap-2 text-sm">
+          <div style={{ marginBottom: '16px', padding: '12px', background: `rgba(${parseInt(COLORS.success.slice(1, 3), 16)}, ${parseInt(COLORS.success.slice(3, 5), 16)}, ${parseInt(COLORS.success.slice(5, 7), 16)}, 0.1)`, border: `1px solid ${COLORS.success}`, color: COLORS.success, borderRadius: '8px', display: 'flex', alignItems: 'center', gap: '8px', fontSize: '14px' }}>
             <CheckCircle size={16} /> Perfil atualizado com sucesso!
           </div>
         )}
 
-        <form onSubmit={handleSave} className="space-y-4">
+        <form onSubmit={handleSave} style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Nome Completo</label>
+            <label style={{ display: 'block', fontSize: '14px', fontWeight: 500, color: COLORS.textPrimary, marginBottom: '8px' }}>Nome Completo</label>
             <input type="text" value={form.name} onChange={e => setForm({...form, name: e.target.value})}
-              className="w-full px-3 py-2 border rounded-lg text-sm" />
+              style={{ width: '100%', padding: '8px 12px', border: `1px solid #EEEEEE`, borderRadius: '8px', fontSize: '14px', fontFamily: 'inherit' }} />
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Email</label>
+            <label style={{ display: 'block', fontSize: '14px', fontWeight: 500, color: COLORS.textPrimary, marginBottom: '8px' }}>Email</label>
             <input type="email" value={form.email} onChange={e => setForm({...form, email: e.target.value})}
-              className="w-full px-3 py-2 border rounded-lg text-sm bg-gray-50" disabled />
-            <p className="text-xs text-gray-400 mt-1">Email nao pode ser alterado</p>
+              style={{ width: '100%', padding: '8px 12px', border: `1px solid #EEEEEE`, borderRadius: '8px', fontSize: '14px', background: '#F5F5F0', fontFamily: 'inherit', cursor: 'not-allowed' }} disabled />
+            <p style={{ fontSize: '12px', color: COLORS.textSecondary, marginTop: '8px' }}>Email nao pode ser alterado</p>
           </div>
-          <div className="grid grid-cols-2 gap-4">
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Telefone</label>
+              <label style={{ display: 'block', fontSize: '14px', fontWeight: 500, color: COLORS.textPrimary, marginBottom: '8px' }}>Telefone</label>
               <input type="tel" value={form.phone} onChange={e => setForm({...form, phone: e.target.value})}
-                className="w-full px-3 py-2 border rounded-lg text-sm" placeholder="+351 xxx xxx xxx" />
+                style={{ width: '100%', padding: '8px 12px', border: `1px solid #EEEEEE`, borderRadius: '8px', fontSize: '14px', fontFamily: 'inherit' }} placeholder="+351 xxx xxx xxx" />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Nacionalidade</label>
+              <label style={{ display: 'block', fontSize: '14px', fontWeight: 500, color: COLORS.textPrimary, marginBottom: '8px' }}>Nacionalidade</label>
               <input type="text" value={form.nationality} onChange={e => setForm({...form, nationality: e.target.value})}
-                className="w-full px-3 py-2 border rounded-lg text-sm" placeholder="Portuguesa" />
+                style={{ width: '100%', padding: '8px 12px', border: `1px solid #EEEEEE`, borderRadius: '8px', fontSize: '14px', fontFamily: 'inherit' }} placeholder="Portuguesa" />
             </div>
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Data de Nascimento</label>
+            <label style={{ display: 'block', fontSize: '14px', fontWeight: 500, color: COLORS.textPrimary, marginBottom: '8px' }}>Data de Nascimento</label>
             <input type="date" value={form.birth_date} onChange={e => setForm({...form, birth_date: e.target.value})}
-              className="w-full px-3 py-2 border rounded-lg text-sm" />
+              style={{ width: '100%', padding: '8px 12px', border: `1px solid #EEEEEE`, borderRadius: '8px', fontSize: '14px', fontFamily: 'inherit' }} />
           </div>
 
           <button type="submit" disabled={saving}
-            className="w-full px-4 py-2.5 bg-emerald-600 text-white rounded-lg hover:bg-emerald-700 disabled:opacity-50 font-medium flex items-center justify-center gap-2">
+            style={{ width: '100%', padding: '10px 16px', background: `linear-gradient(135deg, ${COLORS.primary} 0%, #2D7A62 100%)`, color: 'white', borderRadius: '8px', border: 'none', cursor: 'pointer', fontWeight: 500, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', opacity: saving ? 0.5 : 1, transition: 'opacity 0.2s' }}>
             <Save size={16} />{saving ? 'Salvando...' : 'Salvar Alteracoes'}
           </button>
         </form>
@@ -97,13 +108,13 @@ export default function ClientProfile() {
 
       {/* Additional info */}
       {profile && (
-        <div className="mt-6 bg-white rounded-xl p-6 shadow-sm border border-gray-100">
-          <h2 className="font-semibold text-gray-800 mb-3">Informacoes da Conta</h2>
-          <div className="space-y-2 text-sm">
-            {profile.property_name && <div className="flex justify-between"><span className="text-gray-500">Propriedade</span><span>{profile.property_name}</span></div>}
-            {profile.check_in && <div className="flex justify-between"><span className="text-gray-500">Check-in</span><span>{new Date(profile.check_in).toLocaleDateString('pt-BR')}</span></div>}
-            {profile.check_out && <div className="flex justify-between"><span className="text-gray-500">Check-out</span><span>{new Date(profile.check_out).toLocaleDateString('pt-BR')}</span></div>}
-            {profile.document_id && <div className="flex justify-between"><span className="text-gray-500">Documento</span><span>{profile.document_id}</span></div>}
+        <div style={{ marginTop: '24px', background: 'white', borderRadius: '16px', padding: '24px', border: '1px solid #EEEEEE' }}>
+          <h2 style={{ fontWeight: 600, color: COLORS.textPrimary, marginBottom: '12px' }}>Informacoes da Conta</h2>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', fontSize: '14px' }}>
+            {profile.property_name && <div style={{ display: 'flex', justifyContent: 'space-between' }}><span style={{ color: COLORS.textSecondary }}>Propriedade</span><span style={{ color: COLORS.textPrimary }}>{profile.property_name}</span></div>}
+            {profile.check_in && <div style={{ display: 'flex', justifyContent: 'space-between' }}><span style={{ color: COLORS.textSecondary }}>Check-in</span><span style={{ color: COLORS.textPrimary }}>{new Date(profile.check_in).toLocaleDateString('pt-BR')}</span></div>}
+            {profile.check_out && <div style={{ display: 'flex', justifyContent: 'space-between' }}><span style={{ color: COLORS.textSecondary }}>Check-out</span><span style={{ color: COLORS.textPrimary }}>{new Date(profile.check_out).toLocaleDateString('pt-BR')}</span></div>}
+            {profile.document_id && <div style={{ display: 'flex', justifyContent: 'space-between' }}><span style={{ color: COLORS.textSecondary }}>Documento</span><span style={{ color: COLORS.textPrimary }}>{profile.document_id}</span></div>}
           </div>
         </div>
       )}

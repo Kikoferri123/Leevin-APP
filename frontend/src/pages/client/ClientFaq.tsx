@@ -2,6 +2,17 @@ import React, { useEffect, useState } from 'react';
 import { getClientFaq } from '../../services/api';
 import { HelpCircle, ChevronDown } from 'lucide-react';
 
+const COLORS = {
+  primary: '#1B4D3E',
+  accent: '#E8B931',
+  success: '#388E3C',
+  error: '#D32F2F',
+  warning: '#F57C00',
+  info: '#1976D2',
+  textPrimary: '#212121',
+  textSecondary: '#757575',
+};
+
 export default function ClientFaq() {
   const [faqs, setFaqs] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
@@ -19,33 +30,35 @@ export default function ClientFaq() {
     load();
   }, []);
 
-  if (loading) return <div className="flex items-center justify-center h-64 text-gray-400">Carregando...</div>;
+  if (loading) return <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '256px', color: COLORS.textSecondary }}>Carregando...</div>;
 
   return (
-    <div className="max-w-2xl">
-      <div className="flex items-center gap-3 mb-6">
-        <HelpCircle size={24} className="text-emerald-600" />
-        <h1 className="text-2xl font-bold text-gray-800">Perguntas Frequentes</h1>
+    <div style={{ maxWidth: '512px' }}>
+      <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '24px' }}>
+        <HelpCircle size={24} style={{ color: COLORS.primary }} />
+        <h1 style={{ fontSize: '22px', fontWeight: 700, color: COLORS.textPrimary, fontFamily: "'Poppins', 'Inter', sans-serif" }}>Perguntas Frequentes</h1>
       </div>
 
       {faqs.length === 0 ? (
-        <div className="bg-white rounded-xl p-8 text-center shadow-sm border border-gray-100">
-          <HelpCircle size={48} className="text-gray-300 mx-auto mb-3" />
-          <p className="text-gray-500">Nenhuma FAQ disponivel</p>
+        <div style={{ background: 'white', borderRadius: '16px', padding: '32px', textAlign: 'center', border: '1px solid #EEEEEE' }}>
+          <HelpCircle size={48} style={{ color: '#D0D0D0', margin: '0 auto 12px' }} />
+          <p style={{ color: COLORS.textSecondary }}>Nenhuma FAQ disponivel</p>
         </div>
       ) : (
-        <div className="space-y-3">
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
           {faqs.map((faq: any, i: number) => {
             const isOpen = openId === (faq.id || i);
             return (
-              <div key={faq.id || i} className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
+              <div key={faq.id || i} style={{ background: 'white', borderRadius: '16px', border: '1px solid #EEEEEE', overflow: 'hidden' }}>
                 <button onClick={() => setOpenId(isOpen ? null : (faq.id || i))}
-                  className="w-full px-5 py-4 flex items-center justify-between text-left hover:bg-gray-50 transition-colors">
-                  <span className="font-medium text-gray-800 pr-4">{faq.question}</span>
-                  <ChevronDown size={18} className={`text-gray-400 shrink-0 transition-transform ${isOpen ? 'rotate-180' : ''}`} />
+                  style={{ width: '100%', padding: '16px 20px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', textAlign: 'left', background: 'white', border: 'none', cursor: 'pointer', transition: 'background 0.2s' }}
+                  onMouseEnter={(e) => (e.currentTarget.style.background = '#F5F5F0')}
+                  onMouseLeave={(e) => (e.currentTarget.style.background = 'white')}>
+                  <span style={{ fontWeight: 500, color: COLORS.textPrimary, paddingRight: '16px' }}>{faq.question}</span>
+                  <ChevronDown size={18} style={{ color: COLORS.textSecondary, flexShrink: 0, transition: 'transform 0.2s', transform: isOpen ? 'rotate(180deg)' : 'rotate(0deg)' }} />
                 </button>
                 {isOpen && (
-                  <div className="px-5 pb-4 text-sm text-gray-600 leading-relaxed border-t border-gray-100 pt-3">
+                  <div style={{ padding: '0 20px 16px', fontSize: '14px', color: COLORS.textSecondary, lineHeight: '1.6', borderTop: `1px solid #EEEEEE`, paddingTop: '12px' }}>
                     {faq.answer}
                   </div>
                 )}

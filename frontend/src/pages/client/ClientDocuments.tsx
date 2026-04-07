@@ -2,6 +2,17 @@ import React, { useEffect, useState, useRef } from 'react';
 import { getClientDocuments, uploadClientDocument } from '../../services/api';
 import { FolderOpen, Upload, FileText, Download } from 'lucide-react';
 
+const COLORS = {
+  primary: '#1B4D3E',
+  accent: '#E8B931',
+  success: '#388E3C',
+  error: '#D32F2F',
+  warning: '#F57C00',
+  info: '#1976D2',
+  textPrimary: '#212121',
+  textSecondary: '#757575',
+};
+
 export default function ClientDocuments() {
   const [documents, setDocuments] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
@@ -31,41 +42,41 @@ export default function ClientDocuments() {
     if (fileRef.current) fileRef.current.value = '';
   };
 
-  if (loading) return <div className="flex items-center justify-center h-64 text-gray-400">Carregando...</div>;
+  if (loading) return <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '256px', color: COLORS.textSecondary }}>Carregando...</div>;
 
   return (
     <div>
-      <div className="flex items-center justify-between mb-6">
-        <div className="flex items-center gap-3">
-          <FolderOpen size={24} className="text-emerald-600" />
-          <h1 className="text-2xl font-bold text-gray-800">Meus Documentos</h1>
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '24px' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+          <FolderOpen size={24} style={{ color: COLORS.primary }} />
+          <h1 style={{ fontSize: '22px', fontWeight: 700, color: COLORS.textPrimary, fontFamily: "'Poppins', 'Inter', sans-serif" }}>Meus Documentos</h1>
         </div>
-        <label className={`px-4 py-2 bg-emerald-600 text-white rounded-lg hover:bg-emerald-700 flex items-center gap-2 text-sm font-medium cursor-pointer ${uploading ? 'opacity-50' : ''}`}>
+        <label style={{ padding: '8px 16px', background: `linear-gradient(135deg, ${COLORS.primary} 0%, #2D7A62 100%)`, color: 'white', borderRadius: '8px', display: 'flex', alignItems: 'center', gap: '8px', fontSize: '14px', fontWeight: 500, cursor: 'pointer', opacity: uploading ? 0.5 : 1, transition: 'opacity 0.2s' }}>
           <Upload size={16} />{uploading ? 'Enviando...' : 'Enviar Documento'}
-          <input type="file" ref={fileRef} onChange={handleUpload} className="hidden" disabled={uploading} />
+          <input type="file" ref={fileRef} onChange={handleUpload} style={{ display: 'none' }} disabled={uploading} />
         </label>
       </div>
 
       {documents.length === 0 ? (
-        <div className="bg-white rounded-xl p-8 text-center shadow-sm border border-gray-100">
-          <FolderOpen size={48} className="text-gray-300 mx-auto mb-3" />
-          <p className="text-gray-500">Nenhum documento encontrado</p>
+        <div style={{ background: 'white', borderRadius: '16px', padding: '32px', textAlign: 'center', border: '1px solid #EEEEEE' }}>
+          <FolderOpen size={48} style={{ color: '#D0D0D0', margin: '0 auto 12px' }} />
+          <p style={{ color: COLORS.textSecondary }}>Nenhum documento encontrado</p>
         </div>
       ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))', gap: '16px' }}>
           {documents.map((doc: any, i: number) => (
-            <div key={doc.id || i} className="bg-white rounded-xl p-4 shadow-sm border border-gray-100 flex items-center gap-3">
-              <div className="p-2 bg-emerald-50 rounded-lg"><FileText size={24} className="text-emerald-600" /></div>
-              <div className="flex-1 min-w-0">
-                <p className="font-medium text-gray-800 truncate">{doc.filename || doc.name || `Documento ${doc.id}`}</p>
-                <div className="flex gap-3 text-xs text-gray-400 mt-1">
-                  {doc.category && <span className="capitalize">{doc.category}</span>}
+            <div key={doc.id || i} style={{ background: 'white', borderRadius: '16px', padding: '16px', border: '1px solid #EEEEEE', display: 'flex', alignItems: 'center', gap: '12px' }}>
+              <div style={{ padding: '8px', background: `rgba(${parseInt(COLORS.primary.slice(1, 3), 16)}, ${parseInt(COLORS.primary.slice(3, 5), 16)}, ${parseInt(COLORS.primary.slice(5, 7), 16)}, 0.1)`, borderRadius: '8px' }}><FileText size={24} style={{ color: COLORS.primary }} /></div>
+              <div style={{ flex: 1, minWidth: 0 }}>
+                <p style={{ fontWeight: 500, color: COLORS.textPrimary, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{doc.filename || doc.name || `Documento ${doc.id}`}</p>
+                <div style={{ display: 'flex', gap: '12px', fontSize: '12px', color: COLORS.textSecondary, marginTop: '8px' }}>
+                  {doc.category && <span style={{ textTransform: 'capitalize' }}>{doc.category}</span>}
                   {doc.created_at && <span>{new Date(doc.created_at).toLocaleDateString('pt-BR')}</span>}
                 </div>
               </div>
               {doc.url && (
                 <a href={doc.url} target="_blank" rel="noopener noreferrer"
-                  className="p-2 text-emerald-600 hover:bg-emerald-50 rounded-lg"><Download size={18} /></a>
+                  style={{ padding: '8px', color: COLORS.primary, display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', transition: 'background 0.2s' }}><Download size={18} /></a>
               )}
             </div>
           ))}

@@ -2,6 +2,17 @@ import React, { useEffect, useState } from 'react';
 import { getClientRequests, createClientRequest } from '../../services/api';
 import { Wrench, Plus, Clock, CheckCircle, AlertTriangle } from 'lucide-react';
 
+const COLORS = {
+  primary: '#1B4D3E',
+  accent: '#E8B931',
+  success: '#388E3C',
+  error: '#D32F2F',
+  warning: '#F57C00',
+  info: '#1976D2',
+  textPrimary: '#212121',
+  textSecondary: '#757575',
+};
+
 export default function ClientRequests() {
   const [requests, setRequests] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
@@ -33,44 +44,44 @@ export default function ClientRequests() {
   };
 
   const statusBadge = (status: string) => {
-    if (status === 'completed' || status === 'resolved') return <span className="px-2 py-1 text-xs rounded-full bg-green-100 text-green-700 flex items-center gap-1"><CheckCircle size={12} />Concluido</span>;
-    if (status === 'in_progress' || status === 'em_andamento') return <span className="px-2 py-1 text-xs rounded-full bg-blue-100 text-blue-700 flex items-center gap-1"><Clock size={12} />Em Andamento</span>;
-    if (status === 'pending' || status === 'pendente') return <span className="px-2 py-1 text-xs rounded-full bg-amber-100 text-amber-700 flex items-center gap-1"><AlertTriangle size={12} />Pendente</span>;
-    return <span className="px-2 py-1 text-xs rounded-full bg-gray-100 text-gray-600">{status}</span>;
+    if (status === 'completed' || status === 'resolved') return <span style={{ padding: '6px 8px', fontSize: '12px', borderRadius: '20px', background: `rgba(${parseInt(COLORS.success.slice(1, 3), 16)}, ${parseInt(COLORS.success.slice(3, 5), 16)}, ${parseInt(COLORS.success.slice(5, 7), 16)}, 0.1)`, color: COLORS.success, display: 'flex', alignItems: 'center', gap: '4px' }}><CheckCircle size={12} />Concluido</span>;
+    if (status === 'in_progress' || status === 'em_andamento') return <span style={{ padding: '6px 8px', fontSize: '12px', borderRadius: '20px', background: `rgba(${parseInt(COLORS.info.slice(1, 3), 16)}, ${parseInt(COLORS.info.slice(3, 5), 16)}, ${parseInt(COLORS.info.slice(5, 7), 16)}, 0.1)`, color: COLORS.info, display: 'flex', alignItems: 'center', gap: '4px' }}><Clock size={12} />Em Andamento</span>;
+    if (status === 'pending' || status === 'pendente') return <span style={{ padding: '6px 8px', fontSize: '12px', borderRadius: '20px', background: `rgba(${parseInt(COLORS.warning.slice(1, 3), 16)}, ${parseInt(COLORS.warning.slice(3, 5), 16)}, ${parseInt(COLORS.warning.slice(5, 7), 16)}, 0.1)`, color: COLORS.warning, display: 'flex', alignItems: 'center', gap: '4px' }}><AlertTriangle size={12} />Pendente</span>;
+    return <span style={{ padding: '6px 8px', fontSize: '12px', borderRadius: '20px', background: '#F0F0F0', color: COLORS.textSecondary }}>{status}</span>;
   };
 
-  if (loading) return <div className="flex items-center justify-center h-64 text-gray-400">Carregando...</div>;
+  if (loading) return <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '256px', color: COLORS.textSecondary }}>Carregando...</div>;
 
   return (
     <div>
-      <div className="flex items-center justify-between mb-6">
-        <div className="flex items-center gap-3">
-          <Wrench size={24} className="text-emerald-600" />
-          <h1 className="text-2xl font-bold text-gray-800">Meus Pedidos</h1>
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '24px' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+          <Wrench size={24} style={{ color: COLORS.primary }} />
+          <h1 style={{ fontSize: '22px', fontWeight: 700, color: COLORS.textPrimary, fontFamily: "'Poppins', 'Inter', sans-serif" }}>Meus Pedidos</h1>
         </div>
-        <button onClick={() => setShowForm(true)} className="px-4 py-2 bg-emerald-600 text-white rounded-lg hover:bg-emerald-700 flex items-center gap-2 text-sm font-medium">
+        <button onClick={() => setShowForm(true)} style={{ padding: '8px 16px', background: `linear-gradient(135deg, ${COLORS.primary} 0%, #2D7A62 100%)`, color: 'white', borderRadius: '8px', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '8px', fontSize: '14px', fontWeight: 500, transition: 'opacity 0.2s' }}>
           <Plus size={16} /> Novo Pedido
         </button>
       </div>
 
       {requests.length === 0 && !showForm ? (
-        <div className="bg-white rounded-xl p-8 text-center shadow-sm border border-gray-100">
-          <Wrench size={48} className="text-gray-300 mx-auto mb-3" />
-          <p className="text-gray-500">Nenhum pedido encontrado</p>
-          <button onClick={() => setShowForm(true)} className="mt-3 px-4 py-2 bg-emerald-600 text-white rounded-lg hover:bg-emerald-700 text-sm">
+        <div style={{ background: 'white', borderRadius: '16px', padding: '32px', textAlign: 'center', border: '1px solid #EEEEEE' }}>
+          <Wrench size={48} style={{ color: '#D0D0D0', margin: '0 auto 12px' }} />
+          <p style={{ color: COLORS.textSecondary }}>Nenhum pedido encontrado</p>
+          <button onClick={() => setShowForm(true)} style={{ marginTop: '12px', padding: '8px 16px', background: `linear-gradient(135deg, ${COLORS.primary} 0%, #2D7A62 100%)`, color: 'white', borderRadius: '8px', border: 'none', cursor: 'pointer', fontSize: '14px', fontWeight: 500 }}>
             Criar Primeiro Pedido
           </button>
         </div>
       ) : (
-        <div className="space-y-4">
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
           {requests.map((r: any, i: number) => (
-            <div key={r.id || i} className="bg-white rounded-xl p-5 shadow-sm border border-gray-100">
-              <div className="flex items-start justify-between flex-wrap gap-3">
+            <div key={r.id || i} style={{ background: 'white', borderRadius: '16px', padding: '20px', border: '1px solid #EEEEEE' }}>
+              <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', flexWrap: 'wrap', gap: '12px' }}>
                 <div>
-                  <p className="font-semibold text-gray-800">{r.title || r.subject || `Pedido #${r.id}`}</p>
-                  {r.description && <p className="text-sm text-gray-500 mt-1 line-clamp-2">{r.description}</p>}
-                  <div className="flex gap-3 mt-2 text-xs text-gray-400">
-                    {r.category && <span className="capitalize">{r.category}</span>}
+                  <p style={{ fontWeight: 600, color: COLORS.textPrimary }}>{r.title || r.subject || `Pedido #${r.id}`}</p>
+                  {r.description && <p style={{ fontSize: '14px', color: COLORS.textSecondary, marginTop: '8px', display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>{r.description}</p>}
+                  <div style={{ display: 'flex', gap: '12px', marginTop: '8px', fontSize: '12px', color: '#999' }}>
+                    {r.category && <span style={{ textTransform: 'capitalize' }}>{r.category}</span>}
                     {r.created_at && <span>{new Date(r.created_at).toLocaleDateString('pt-BR')}</span>}
                   </div>
                 </div>
@@ -83,25 +94,25 @@ export default function ClientRequests() {
 
       {/* New request form */}
       {showForm && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-          <div className="bg-white rounded-xl max-w-lg w-full p-6">
-            <h2 className="text-xl font-bold mb-4">Novo Pedido</h2>
-            <form onSubmit={handleSubmit} className="space-y-4">
+        <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.5)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 50, padding: '16px' }}>
+          <div style={{ background: 'white', borderRadius: '16px', maxWidth: '32rem', width: '100%', padding: '24px' }}>
+            <h2 style={{ fontSize: '18px', fontWeight: 700, marginBottom: '16px', color: COLORS.textPrimary }}>Novo Pedido</h2>
+            <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
               <div>
-                <label className="block text-sm font-medium mb-1">Titulo</label>
+                <label style={{ display: 'block', fontSize: '14px', fontWeight: 500, marginBottom: '8px', color: COLORS.textPrimary }}>Titulo</label>
                 <input type="text" value={form.title} onChange={e => setForm({...form, title: e.target.value})}
-                  className="w-full px-3 py-2 border rounded-lg text-sm" required placeholder="Ex: Torneira com vazamento" />
+                  style={{ width: '100%', padding: '8px 12px', border: `1px solid #EEEEEE`, borderRadius: '8px', fontSize: '14px', fontFamily: 'inherit' }} required placeholder="Ex: Torneira com vazamento" />
               </div>
               <div>
-                <label className="block text-sm font-medium mb-1">Descricao</label>
+                <label style={{ display: 'block', fontSize: '14px', fontWeight: 500, marginBottom: '8px', color: COLORS.textPrimary }}>Descricao</label>
                 <textarea value={form.description} onChange={e => setForm({...form, description: e.target.value})}
-                  className="w-full px-3 py-2 border rounded-lg text-sm h-24 resize-none" required placeholder="Descreva o problema..." />
+                  style={{ width: '100%', padding: '8px 12px', border: `1px solid #EEEEEE`, borderRadius: '8px', fontSize: '14px', height: '96px', resize: 'none', fontFamily: 'inherit' }} required placeholder="Descreva o problema..." />
               </div>
-              <div className="grid grid-cols-2 gap-4">
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
                 <div>
-                  <label className="block text-sm font-medium mb-1">Categoria</label>
+                  <label style={{ display: 'block', fontSize: '14px', fontWeight: 500, marginBottom: '8px', color: COLORS.textPrimary }}>Categoria</label>
                   <select value={form.category} onChange={e => setForm({...form, category: e.target.value})}
-                    className="w-full px-3 py-2 border rounded-lg text-sm">
+                    style={{ width: '100%', padding: '8px 12px', border: `1px solid #EEEEEE`, borderRadius: '8px', fontSize: '14px', fontFamily: 'inherit' }}>
                     <option value="maintenance">Manutencao</option>
                     <option value="cleaning">Limpeza</option>
                     <option value="plumbing">Canalizar</option>
@@ -110,9 +121,9 @@ export default function ClientRequests() {
                   </select>
                 </div>
                 <div>
-                  <label className="block text-sm font-medium mb-1">Urgencia</label>
+                  <label style={{ display: 'block', fontSize: '14px', fontWeight: 500, marginBottom: '8px', color: COLORS.textPrimary }}>Urgencia</label>
                   <select value={form.urgency} onChange={e => setForm({...form, urgency: e.target.value})}
-                    className="w-full px-3 py-2 border rounded-lg text-sm">
+                    style={{ width: '100%', padding: '8px 12px', border: `1px solid #EEEEEE`, borderRadius: '8px', fontSize: '14px', fontFamily: 'inherit' }}>
                     <option value="low">Baixa</option>
                     <option value="normal">Normal</option>
                     <option value="high">Alta</option>
@@ -120,13 +131,13 @@ export default function ClientRequests() {
                   </select>
                 </div>
               </div>
-              <div className="flex gap-3 pt-2">
+              <div style={{ display: 'flex', gap: '12px', paddingTop: '8px' }}>
                 <button type="submit" disabled={submitting}
-                  className="flex-1 px-4 py-2 bg-emerald-600 text-white rounded-lg hover:bg-emerald-700 disabled:opacity-50 font-medium">
+                  style={{ flex: 1, padding: '8px 16px', background: `linear-gradient(135deg, ${COLORS.primary} 0%, #2D7A62 100%)`, color: 'white', borderRadius: '8px', border: 'none', cursor: 'pointer', fontWeight: 500, opacity: submitting ? 0.5 : 1, transition: 'opacity 0.2s' }}>
                   {submitting ? 'Enviando...' : 'Enviar Pedido'}
                 </button>
                 <button type="button" onClick={() => setShowForm(false)}
-                  className="flex-1 px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200">Cancelar</button>
+                  style={{ flex: 1, padding: '8px 16px', background: '#F5F5F0', color: COLORS.textPrimary, borderRadius: '8px', border: 'none', cursor: 'pointer', fontWeight: 500, transition: 'background 0.2s' }}>Cancelar</button>
               </div>
             </form>
           </div>

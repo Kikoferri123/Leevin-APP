@@ -1,99 +1,63 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
-import {
-  LayoutDashboard, FileSignature, CreditCard, MessageSquare,
-  Wrench, User, LogOut, Menu, X, Newspaper, HelpCircle,
-  Award, Bell, Home, FolderOpen
-} from 'lucide-react';
 
-const clientNavItems = [
-  { path: '/cliente', label: 'Inicio', icon: LayoutDashboard },
-  { path: '/cliente/propriedade', label: 'Minha Casa', icon: Home },
-  { path: '/cliente/contratos', label: 'Contratos', icon: FileSignature },
-  { path: '/cliente/pagamentos', label: 'Pagamentos', icon: CreditCard },
-  { path: '/cliente/pedidos', label: 'Pedidos', icon: Wrench },
-  { path: '/cliente/mensagens', label: 'Mensagens', icon: MessageSquare },
-  { path: '/cliente/documentos', label: 'Documentos', icon: FolderOpen },
-  { path: '/cliente/noticias', label: 'Noticias', icon: Newspaper },
-  { path: '/cliente/recompensas', label: 'Recompensas', icon: Award },
-  { path: '/cliente/faq', label: 'FAQ', icon: HelpCircle },
-  { path: '/cliente/perfil', label: 'Meu Perfil', icon: User },
+const bottomNavItems = [
+  { path: '/cliente', label: 'Inicio', iconDefault: 'M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6', iconFilled: 'M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z' },
+  { path: '/cliente/contratos', label: 'Contratos', iconDefault: 'M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z' },
+  { path: '/cliente/pedidos', label: 'Pedidos', iconDefault: 'M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.066 2.573c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.573 1.066c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.066-2.573c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z M15 12a3 3 0 11-6 0 3 3 0 016 0z', isBuild: true },
+  { path: '/cliente/pagamentos', label: 'Pagamentos', iconDefault: 'M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01' },
+  { path: '/cliente/perfil', label: 'Perfil', iconDefault: 'M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z' },
 ];
 
 export default function ClientLayout({ children }: { children: React.ReactNode }) {
   const { user, logout } = useAuth();
   const location = useLocation();
   const navigate = useNavigate();
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   const isActive = (path: string) => location.pathname === path;
 
   return (
-    <div className="flex h-screen bg-gray-50">
-      {/* Mobile overlay */}
-      {mobileMenuOpen && (
-        <div className="fixed inset-0 bg-black/50 z-40 lg:hidden" onClick={() => setMobileMenuOpen(false)} />
-      )}
-
-      {/* Sidebar */}
-      <aside className={`w-64 bg-gradient-to-b from-emerald-900 to-emerald-800 text-white transition-all duration-300 flex flex-col
-        fixed lg:relative z-50 h-full ${mobileMenuOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'}`}>
-        <div className="p-4 flex items-center gap-3 border-b border-emerald-700">
-          <div className="w-10 h-10 rounded-lg bg-amber-500 flex items-center justify-center font-bold text-lg shrink-0">LA</div>
-          <div>
-            <h1 className="font-bold text-lg leading-tight">Leevin APP</h1>
-            <p className="text-xs text-emerald-300">Portal do Cliente</p>
-          </div>
+    <div style={{ minHeight: '100vh', background: '#F5F5F0', fontFamily: "'Inter', sans-serif", paddingBottom: 72 }}>
+      {/* Top App Bar */}
+      <header style={{ background: 'white', padding: '12px 20px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', borderBottom: '1px solid #EEEEEE', position: 'sticky', top: 0, zIndex: 50 }}>
+        <h1 style={{ fontSize: 20, fontWeight: 700, color: '#1B4D3E', margin: 0, fontFamily: "'Poppins', 'Inter', sans-serif" }}>Leevin APP</h1>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+          {/* Notifications bell */}
+          <button onClick={() => navigate('/cliente/mensagens')} style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#424242', padding: 4 }}>
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 01-3.46 0"/></svg>
+          </button>
+          {/* Logout */}
+          <button onClick={logout} style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#757575', padding: 4 }} title="Sair">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4"/><polyline points="16,17 21,12 16,7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+          </button>
         </div>
-
-        <nav className="flex-1 overflow-y-auto py-4 px-3 space-y-1">
-          {clientNavItems.map((item) => {
-            const Icon = item.icon;
-            return (
-              <Link key={item.path} to={item.path}
-                onClick={() => setMobileMenuOpen(false)}
-                className={`flex items-center gap-3 px-3 py-2.5 rounded-lg transition-colors ${
-                  isActive(item.path)
-                    ? 'bg-emerald-600 text-white'
-                    : 'text-emerald-200 hover:bg-emerald-700/50 hover:text-white'
-                }`}>
-                <Icon size={20} /><span className="text-sm">{item.label}</span>
-              </Link>
-            );
-          })}
-        </nav>
-
-        <div className="p-4 border-t border-emerald-700">
-          <div className="flex items-center gap-3">
-            <div className="w-8 h-8 rounded-full bg-amber-500 flex items-center justify-center text-sm font-bold shrink-0 cursor-pointer"
-              onClick={() => navigate('/cliente/perfil')}>
-              {user?.name?.charAt(0) || 'C'}
-            </div>
-            <div className="flex-1 min-w-0 cursor-pointer" onClick={() => navigate('/cliente/perfil')}>
-              <p className="text-sm font-medium truncate">{user?.name || 'Cliente'}</p>
-              <p className="text-xs text-emerald-300">Cliente</p>
-            </div>
-            <button onClick={logout} className="text-emerald-300 hover:text-white p-1" title="Sair"><LogOut size={18} /></button>
-          </div>
-        </div>
-      </aside>
+      </header>
 
       {/* Main content */}
-      <main className="flex-1 overflow-auto">
-        <header className="bg-white border-b border-gray-200 px-6 py-3 flex items-center justify-between sticky top-0 z-10">
-          <button onClick={() => setMobileMenuOpen(!mobileMenuOpen)} className="text-gray-500 hover:text-gray-700 lg:hidden">
-            {mobileMenuOpen ? <X size={20} /> : <Menu size={20} />}
-          </button>
-          <div className="flex items-center gap-4 ml-auto">
-            <span className="text-xs px-2 py-1 rounded-full bg-emerald-100 text-emerald-700 font-medium">Cliente</span>
-            <div className="text-sm text-gray-500">
-              {new Date().toLocaleDateString('pt-BR', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}
-            </div>
-          </div>
-        </header>
-        <div className="p-6">{children}</div>
+      <main style={{ padding: 20, maxWidth: 800, margin: '0 auto' }}>
+        {children}
       </main>
+
+      {/* Bottom Navigation Bar */}
+      <nav style={{
+        position: 'fixed', bottom: 0, left: 0, right: 0, background: 'white',
+        borderTop: '1px solid #EEEEEE', display: 'flex', justifyContent: 'space-around',
+        padding: '8px 0 12px', zIndex: 50,
+        boxShadow: '0 -2px 10px rgba(0,0,0,0.05)'
+      }}>
+        {bottomNavItems.map(item => {
+          const active = isActive(item.path);
+          return (
+            <Link key={item.path} to={item.path} style={{ textDecoration: 'none', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 2, minWidth: 56 }}>
+              <svg width="24" height="24" viewBox="0 0 24 24" fill={active ? '#1B4D3E' : 'none'} stroke={active ? '#1B4D3E' : '#757575'} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <path d={item.iconDefault} />
+              </svg>
+              <span style={{ fontSize: 11, fontWeight: active ? 600 : 400, color: active ? '#1B4D3E' : '#757575' }}>{item.label}</span>
+            </Link>
+          );
+        })}
+      </nav>
     </div>
   );
 }

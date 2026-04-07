@@ -1,115 +1,92 @@
 import React, { useEffect, useState } from 'react';
 import { useAuth } from '../../contexts/AuthContext';
-import { getClientContracts, getClientPayments, getClientRequests, getClientMessages, getClientAlerts, getClientProperty } from '../../services/api';
-import { Link } from 'react-router-dom';
-import { FileSignature, CreditCard, Wrench, MessageSquare, Bell, Home } from 'lucide-react';
+import { getClientProperty, getClientAlerts } from '../../services/api';
+import { useNavigate } from 'react-router-dom';
+
+const quickActions = [
+  { label: 'Contratos', path: '/cliente/contratos', icon: 'M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z' },
+  { label: 'Pedidos', path: '/cliente/pedidos', icon: 'M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.066 2.573c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.573-1.066c-.426 1.756-2.924 1.756-3.35 0' },
+  { label: 'Pagamentos', path: '/cliente/pagamentos', icon: 'M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2' },
+  { label: 'Mensagens', path: '/cliente/mensagens', icon: 'M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z' },
+  { label: 'Noticias', path: '/cliente/noticias', icon: 'M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2' },
+  { label: 'Recompensas', path: '/cliente/recompensas', icon: 'M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z' },
+  { label: 'Check-in', path: '/cliente/contratos', icon: 'M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1' },
+  { label: 'Avaliacoes', path: '/cliente/faq', icon: 'M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z' },
+  { label: 'FAQ', path: '/cliente/faq', icon: 'M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z' },
+  { label: 'Indicacoes', path: '/cliente/perfil', icon: 'M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z' },
+  { label: 'Documentos', path: '/cliente/documentos', icon: 'M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z' },
+  { label: 'Propriedade', path: '/cliente/propriedade', icon: 'M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6' },
+];
 
 export default function ClientDashboard() {
   const { user } = useAuth();
-  const [stats, setStats] = useState({ contracts: 0, payments: 0, requests: 0, messages: 0, alerts: 0 });
+  const navigate = useNavigate();
   const [property, setProperty] = useState<any>(null);
-  const [recentAlerts, setRecentAlerts] = useState<any[]>([]);
+  const [alerts, setAlerts] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const load = async () => {
-      try {
-        const [contractsRes, paymentsRes, requestsRes, messagesRes, alertsRes] = await Promise.allSettled([
-          getClientContracts(),
-          getClientPayments(),
-          getClientRequests(),
-          getClientMessages(),
-          getClientAlerts(),
-        ]);
-
-        setStats({
-          contracts: contractsRes.status === 'fulfilled' ? (contractsRes.value.data?.length || contractsRes.value.data?.contracts?.length || 0) : 0,
-          payments: paymentsRes.status === 'fulfilled' ? (paymentsRes.value.data?.length || paymentsRes.value.data?.payments?.length || 0) : 0,
-          requests: requestsRes.status === 'fulfilled' ? (requestsRes.value.data?.length || requestsRes.value.data?.requests?.length || 0) : 0,
-          messages: messagesRes.status === 'fulfilled' ? (messagesRes.value.data?.length || messagesRes.value.data?.messages?.length || 0) : 0,
-          alerts: alertsRes.status === 'fulfilled' ? (alertsRes.value.data?.length || alertsRes.value.data?.alerts?.length || 0) : 0,
-        });
-
-        if (alertsRes.status === 'fulfilled') {
-          const alertData = alertsRes.value.data?.alerts || alertsRes.value.data || [];
-          setRecentAlerts(Array.isArray(alertData) ? alertData.slice(0, 5) : []);
-        }
-
-        try {
-          const propRes = await getClientProperty();
-          setProperty(propRes.data);
-        } catch {}
-      } catch {}
+      try { const res = await getClientProperty(); setProperty(res.data); } catch {}
+      try { const res = await getClientAlerts(); const d = res.data?.alerts || res.data || []; setAlerts(Array.isArray(d) ? d.slice(0, 3) : []); } catch {}
       setLoading(false);
     };
     load();
   }, []);
 
-  if (loading) return <div className="flex items-center justify-center h-64 text-gray-400">Carregando...</div>;
-
-  const cards = [
-    { label: 'Contratos', value: stats.contracts, icon: FileSignature, color: 'bg-blue-500', link: '/cliente/contratos' },
-    { label: 'Pagamentos', value: stats.payments, icon: CreditCard, color: 'bg-green-500', link: '/cliente/pagamentos' },
-    { label: 'Pedidos', value: stats.requests, icon: Wrench, color: 'bg-orange-500', link: '/cliente/pedidos' },
-    { label: 'Mensagens', value: stats.messages, icon: MessageSquare, color: 'bg-purple-500', link: '/cliente/mensagens' },
-  ];
+  if (loading) return <div style={{ display: 'flex', justifyContent: 'center', padding: 60, color: '#757575' }}>Carregando...</div>;
 
   return (
     <div>
-      <div className="mb-6">
-        <h1 className="text-2xl font-bold text-gray-800">Ola, {user?.name || 'Cliente'}!</h1>
-        <p className="text-gray-500">Bem-vindo ao seu portal</p>
-      </div>
+      {/* Welcome */}
+      <h1 style={{ fontSize: 24, fontWeight: 700, color: '#212121', margin: '0 0 20px', fontFamily: "'Poppins', 'Inter', sans-serif" }}>Bem-vindo!</h1>
 
-      {/* Property card */}
+      {/* Property Card */}
       {property && (
-        <Link to="/cliente/propriedade" className="block mb-6 bg-gradient-to-r from-emerald-600 to-emerald-700 rounded-xl p-5 text-white hover:from-emerald-700 hover:to-emerald-800 transition-colors">
-          <div className="flex items-center gap-3">
-            <Home size={24} />
+        <div onClick={() => navigate('/cliente/propriedade')}
+          style={{ background: 'linear-gradient(135deg, #1B4D3E 0%, rgba(27,77,62,0.8) 100%)', borderRadius: 16, padding: 20, color: 'white', marginBottom: 24, cursor: 'pointer' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 14 }}>
+            <svg width="32" height="32" viewBox="0 0 24 24" fill="white" stroke="white" strokeWidth="1.5"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/></svg>
             <div>
-              <p className="text-sm text-emerald-200">Minha Casa</p>
-              <p className="text-lg font-semibold">{property.name || property.property_name || 'Minha Propriedade'}</p>
-              {property.address && <p className="text-sm text-emerald-200">{property.address}</p>}
+              <p style={{ fontSize: 18, fontWeight: 600, margin: 0 }}>{property.name || property.property_name}</p>
+              {property.address && <p style={{ fontSize: 13, margin: '4px 0 0', opacity: 0.85 }}>{property.address}</p>}
+              {property.monthly_rent && <p style={{ fontSize: 13, margin: '4px 0 0', opacity: 0.85 }}>Renda: EUR {Number(property.monthly_rent).toFixed(2)}/mes</p>}
             </div>
           </div>
-        </Link>
+        </div>
       )}
 
-      {/* Stats grid */}
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
-        {cards.map(card => {
-          const Icon = card.icon;
-          return (
-            <Link key={card.label} to={card.link}
-              className="bg-white rounded-xl p-5 shadow-sm border border-gray-100 hover:shadow-md transition-shadow">
-              <div className="flex items-center gap-3">
-                <div className={`${card.color} p-2 rounded-lg text-white`}><Icon size={20} /></div>
-                <div>
-                  <p className="text-2xl font-bold text-gray-800">{card.value}</p>
-                  <p className="text-sm text-gray-500">{card.label}</p>
-                </div>
-              </div>
-            </Link>
-          );
-        })}
+      {/* Quick Actions */}
+      <h2 style={{ fontSize: 18, fontWeight: 600, color: '#212121', margin: '0 0 14px', fontFamily: "'Poppins', 'Inter', sans-serif" }}>Acoes Rapidas</h2>
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 12, marginBottom: 24 }}>
+        {quickActions.map(action => (
+          <div key={action.label} onClick={() => navigate(action.path)}
+            style={{ background: 'white', borderRadius: 14, padding: '16px 8px', textAlign: 'center', cursor: 'pointer', border: '1px solid #EEEEEE', transition: 'box-shadow 0.2s' }}
+            onMouseEnter={e => (e.currentTarget.style.boxShadow = '0 4px 12px rgba(0,0,0,0.08)')}
+            onMouseLeave={e => (e.currentTarget.style.boxShadow = 'none')}>
+            <div style={{ width: 40, height: 40, borderRadius: 12, background: '#F0F7F4', display: 'inline-flex', alignItems: 'center', justifyContent: 'center', marginBottom: 8 }}>
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#1B4D3E" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d={action.icon} /></svg>
+            </div>
+            <p style={{ fontSize: 12, color: '#424242', margin: 0, fontWeight: 500 }}>{action.label}</p>
+          </div>
+        ))}
       </div>
 
-      {/* Recent alerts */}
-      {recentAlerts.length > 0 && (
-        <div className="bg-white rounded-xl p-5 shadow-sm border border-gray-100">
-          <div className="flex items-center gap-2 mb-4">
-            <Bell size={18} className="text-amber-500" />
-            <h2 className="font-semibold text-gray-800">Alertas Recentes</h2>
-          </div>
-          <div className="space-y-3">
-            {recentAlerts.map((alert: any, i: number) => (
-              <div key={alert.id || i} className="flex items-start gap-3 p-3 bg-gray-50 rounded-lg">
-                <div className={`w-2 h-2 rounded-full mt-2 shrink-0 ${
-                  alert.severity === 'high' ? 'bg-red-500' : alert.severity === 'medium' ? 'bg-amber-500' : 'bg-blue-500'
-                }`} />
+      {/* Recent Alerts */}
+      {alerts.length > 0 && (
+        <div>
+          <h2 style={{ fontSize: 18, fontWeight: 600, color: '#212121', margin: '0 0 14px', fontFamily: "'Poppins', 'Inter', sans-serif" }}>Alertas Recentes</h2>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+            {alerts.map((alert: any, i: number) => (
+              <div key={alert.id || i} style={{ background: 'white', borderRadius: 12, padding: 16, border: '1px solid #EEEEEE', display: 'flex', alignItems: 'start', gap: 12 }}>
+                <div style={{ width: 36, height: 36, borderRadius: 10, background: alert.severity === 'high' ? '#FFEBEE' : alert.severity === 'medium' ? '#FFF3E0' : '#E3F2FD', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke={alert.severity === 'high' ? '#D32F2F' : alert.severity === 'medium' ? '#F57C00' : '#1976D2'} strokeWidth="2">
+                    <path d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/>
+                  </svg>
+                </div>
                 <div>
-                  <p className="text-sm text-gray-700">{alert.message}</p>
-                  {alert.created_at && <p className="text-xs text-gray-400 mt-1">{new Date(alert.created_at).toLocaleDateString('pt-BR')}</p>}
+                  {alert.type && <p style={{ fontSize: 13, fontWeight: 600, color: '#424242', margin: '0 0 2px', textTransform: 'capitalize' }}>{alert.type}</p>}
+                  <p style={{ fontSize: 13, color: '#757575', margin: 0 }}>{alert.message}</p>
                 </div>
               </div>
             ))}

@@ -43,6 +43,7 @@ import BrandingPage from './pages/BrandingPage';
 
 // Client Portal Pages
 import ClientLogin from './pages/client/ClientLogin';
+import ClientRegister from './pages/client/ClientRegister';
 import ClientDashboard from './pages/client/ClientDashboard';
 import ClientContracts from './pages/client/ClientContracts';
 import ClientPayments from './pages/client/ClientPayments';
@@ -78,6 +79,7 @@ export default function App() {
       {/* Public routes */}
       <Route path="/login" element={<Login />} />
       <Route path="/cliente/login" element={<ClientLogin />} />
+      <Route path="/cliente/register" element={<ClientRegister />} />
       <Route path="/sign/:token" element={<PublicSign />} />
 
       {/* Client Portal routes */}

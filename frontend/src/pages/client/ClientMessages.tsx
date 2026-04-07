@@ -2,6 +2,17 @@ import React, { useEffect, useState } from 'react';
 import { getClientMessages, sendClientMessage, markClientMessageRead } from '../../services/api';
 import { MessageSquare, Send, Check, CheckCheck } from 'lucide-react';
 
+const COLORS = {
+  primary: '#1B4D3E',
+  accent: '#E8B931',
+  success: '#388E3C',
+  error: '#D32F2F',
+  warning: '#F57C00',
+  info: '#1976D2',
+  textPrimary: '#212121',
+  textSecondary: '#757575',
+};
+
 export default function ClientMessages() {
   const [messages, setMessages] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
@@ -39,51 +50,49 @@ export default function ClientMessages() {
     } catch {}
   };
 
-  if (loading) return <div className="flex items-center justify-center h-64 text-gray-400">Carregando...</div>;
+  if (loading) return <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '256px', color: COLORS.textSecondary }}>Carregando...</div>;
 
   return (
     <div>
-      <div className="flex items-center justify-between mb-6">
-        <div className="flex items-center gap-3">
-          <MessageSquare size={24} className="text-emerald-600" />
-          <h1 className="text-2xl font-bold text-gray-800">Mensagens</h1>
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '24px' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+          <MessageSquare size={24} style={{ color: COLORS.primary }} />
+          <h1 style={{ fontSize: '22px', fontWeight: 700, color: COLORS.textPrimary, fontFamily: "'Poppins', 'Inter', sans-serif" }}>Mensagens</h1>
         </div>
-        <button onClick={() => setShowCompose(true)} className="px-4 py-2 bg-emerald-600 text-white rounded-lg hover:bg-emerald-700 flex items-center gap-2 text-sm font-medium">
+        <button onClick={() => setShowCompose(true)} style={{ padding: '8px 16px', background: `linear-gradient(135deg, ${COLORS.primary} 0%, #2D7A62 100%)`, color: 'white', borderRadius: '8px', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '8px', fontSize: '14px', fontWeight: 500, transition: 'opacity 0.2s' }}>
           <Send size={16} /> Nova Mensagem
         </button>
       </div>
 
       {messages.length === 0 && !showCompose ? (
-        <div className="bg-white rounded-xl p-8 text-center shadow-sm border border-gray-100">
-          <MessageSquare size={48} className="text-gray-300 mx-auto mb-3" />
-          <p className="text-gray-500">Nenhuma mensagem</p>
+        <div style={{ background: 'white', borderRadius: '16px', padding: '32px', textAlign: 'center', border: '1px solid #EEEEEE' }}>
+          <MessageSquare size={48} style={{ color: '#D0D0D0', margin: '0 auto 12px' }} />
+          <p style={{ color: COLORS.textSecondary }}>Nenhuma mensagem</p>
         </div>
       ) : (
-        <div className="space-y-3">
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
           {messages.map((m: any, i: number) => (
             <div key={m.id || i}
               onClick={() => !m.read && m.id && handleMarkRead(m.id)}
-              className={`bg-white rounded-xl p-4 shadow-sm border cursor-pointer hover:shadow-md transition-shadow ${
-                m.read ? 'border-gray-100' : 'border-emerald-200 bg-emerald-50/30'
-              }`}>
-              <div className="flex items-start justify-between gap-3">
-                <div className="flex-1">
-                  <div className="flex items-center gap-2">
-                    <p className={`font-medium ${m.read ? 'text-gray-700' : 'text-gray-900 font-semibold'}`}>
+              style={{ background: 'white', borderRadius: '16px', padding: '16px', border: m.read ? '1px solid #EEEEEE' : `1px solid ${COLORS.primary}`, cursor: 'pointer', transition: 'box-shadow 0.2s', boxShadow: 'none' }}>
+              <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: '12px' }}>
+                <div style={{ flex: 1 }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                    <p style={{ fontWeight: m.read ? 500 : 600, color: COLORS.textPrimary }}>
                       {m.subject || m.title || 'Mensagem'}
                     </p>
-                    {m.read ? <CheckCheck size={14} className="text-emerald-500" /> : <Check size={14} className="text-gray-400" />}
+                    {m.read ? <CheckCheck size={14} style={{ color: COLORS.primary }} /> : <Check size={14} style={{ color: COLORS.textSecondary }} />}
                   </div>
-                  <p className="text-sm text-gray-500 mt-1 line-clamp-2">{m.message || m.body || m.content || ''}</p>
-                  <div className="flex gap-3 mt-2 text-xs text-gray-400">
+                  <p style={{ fontSize: '14px', color: COLORS.textSecondary, marginTop: '8px', display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>{m.message || m.body || m.content || ''}</p>
+                  <div style={{ display: 'flex', gap: '12px', marginTop: '8px', fontSize: '12px', color: '#999' }}>
                     {m.from_name && <span>De: {m.from_name}</span>}
                     {m.created_at && <span>{new Date(m.created_at).toLocaleDateString('pt-BR')}</span>}
                   </div>
                 </div>
               </div>
               {m.reply && (
-                <div className="mt-3 p-3 bg-gray-50 rounded-lg text-sm text-gray-600 border-l-3 border-emerald-400">
-                  <p className="text-xs text-emerald-600 font-medium mb-1">Resposta da gestao:</p>
+                <div style={{ marginTop: '12px', padding: '12px', background: '#F5F5F0', borderRadius: '8px', fontSize: '14px', color: COLORS.textSecondary, borderLeft: `3px solid ${COLORS.primary}` }}>
+                  <p style={{ fontSize: '12px', color: COLORS.primary, fontWeight: 500, marginBottom: '8px' }}>Resposta da gestao:</p>
                   {m.reply}
                 </div>
               )}
@@ -94,27 +103,27 @@ export default function ClientMessages() {
 
       {/* Compose modal */}
       {showCompose && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-          <div className="bg-white rounded-xl max-w-lg w-full p-6">
-            <h2 className="text-xl font-bold mb-4">Nova Mensagem</h2>
-            <form onSubmit={handleSend} className="space-y-4">
+        <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.5)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 50, padding: '16px' }}>
+          <div style={{ background: 'white', borderRadius: '16px', maxWidth: '32rem', width: '100%', padding: '24px' }}>
+            <h2 style={{ fontSize: '18px', fontWeight: 700, marginBottom: '16px', color: COLORS.textPrimary }}>Nova Mensagem</h2>
+            <form onSubmit={handleSend} style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
               <div>
-                <label className="block text-sm font-medium mb-1">Assunto</label>
+                <label style={{ display: 'block', fontSize: '14px', fontWeight: 500, marginBottom: '8px', color: COLORS.textPrimary }}>Assunto</label>
                 <input type="text" value={newMsg.subject} onChange={e => setNewMsg({...newMsg, subject: e.target.value})}
-                  className="w-full px-3 py-2 border rounded-lg text-sm" required placeholder="Assunto da mensagem" />
+                  style={{ width: '100%', padding: '8px 12px', border: `1px solid #EEEEEE`, borderRadius: '8px', fontSize: '14px', fontFamily: 'inherit' }} required placeholder="Assunto da mensagem" />
               </div>
               <div>
-                <label className="block text-sm font-medium mb-1">Mensagem</label>
+                <label style={{ display: 'block', fontSize: '14px', fontWeight: 500, marginBottom: '8px', color: COLORS.textPrimary }}>Mensagem</label>
                 <textarea value={newMsg.message} onChange={e => setNewMsg({...newMsg, message: e.target.value})}
-                  className="w-full px-3 py-2 border rounded-lg text-sm h-32 resize-none" required placeholder="Escreva sua mensagem..." />
+                  style={{ width: '100%', padding: '8px 12px', border: `1px solid #EEEEEE`, borderRadius: '8px', fontSize: '14px', height: '128px', resize: 'none', fontFamily: 'inherit' }} required placeholder="Escreva sua mensagem..." />
               </div>
-              <div className="flex gap-3">
+              <div style={{ display: 'flex', gap: '12px' }}>
                 <button type="submit" disabled={sending}
-                  className="flex-1 px-4 py-2 bg-emerald-600 text-white rounded-lg hover:bg-emerald-700 disabled:opacity-50 font-medium flex items-center justify-center gap-2">
+                  style={{ flex: 1, padding: '8px 16px', background: `linear-gradient(135deg, ${COLORS.primary} 0%, #2D7A62 100%)`, color: 'white', borderRadius: '8px', border: 'none', cursor: 'pointer', fontWeight: 500, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', opacity: sending ? 0.5 : 1, transition: 'opacity 0.2s' }}>
                   <Send size={16} />{sending ? 'Enviando...' : 'Enviar'}
                 </button>
                 <button type="button" onClick={() => setShowCompose(false)}
-                  className="flex-1 px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200">Cancelar</button>
+                  style={{ flex: 1, padding: '8px 16px', background: '#F5F5F0', color: COLORS.textPrimary, borderRadius: '8px', border: 'none', cursor: 'pointer', fontWeight: 500, transition: 'background 0.2s' }}>Cancelar</button>
               </div>
             </form>
           </div>

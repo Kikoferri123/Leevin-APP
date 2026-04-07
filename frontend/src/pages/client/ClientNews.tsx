@@ -2,6 +2,17 @@ import React, { useEffect, useState } from 'react';
 import { getClientNews } from '../../services/api';
 import { Newspaper } from 'lucide-react';
 
+const COLORS = {
+  primary: '#1B4D3E',
+  accent: '#E8B931',
+  success: '#388E3C',
+  error: '#D32F2F',
+  warning: '#F57C00',
+  info: '#1976D2',
+  textPrimary: '#212121',
+  textSecondary: '#757575',
+};
+
 export default function ClientNews() {
   const [news, setNews] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
@@ -18,28 +29,28 @@ export default function ClientNews() {
     load();
   }, []);
 
-  if (loading) return <div className="flex items-center justify-center h-64 text-gray-400">Carregando...</div>;
+  if (loading) return <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '256px', color: COLORS.textSecondary }}>Carregando...</div>;
 
   return (
     <div>
-      <div className="flex items-center gap-3 mb-6">
-        <Newspaper size={24} className="text-emerald-600" />
-        <h1 className="text-2xl font-bold text-gray-800">Noticias</h1>
+      <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '24px' }}>
+        <Newspaper size={24} style={{ color: COLORS.primary }} />
+        <h1 style={{ fontSize: '22px', fontWeight: 700, color: COLORS.textPrimary, fontFamily: "'Poppins', 'Inter', sans-serif" }}>Noticias</h1>
       </div>
 
       {news.length === 0 ? (
-        <div className="bg-white rounded-xl p-8 text-center shadow-sm border border-gray-100">
-          <Newspaper size={48} className="text-gray-300 mx-auto mb-3" />
-          <p className="text-gray-500">Nenhuma noticia no momento</p>
+        <div style={{ background: 'white', borderRadius: '16px', padding: '32px', textAlign: 'center', border: '1px solid #EEEEEE' }}>
+          <Newspaper size={48} style={{ color: '#D0D0D0', margin: '0 auto 12px' }} />
+          <p style={{ color: COLORS.textSecondary }}>Nenhuma noticia no momento</p>
         </div>
       ) : (
-        <div className="space-y-4">
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
           {news.map((item: any, i: number) => (
-            <div key={item.id || i} className="bg-white rounded-xl p-5 shadow-sm border border-gray-100">
-              <h2 className="text-lg font-semibold text-gray-800">{item.title}</h2>
-              {item.created_at && <p className="text-xs text-gray-400 mt-1">{new Date(item.created_at).toLocaleDateString('pt-BR')}</p>}
-              <p className="text-gray-600 mt-3 text-sm leading-relaxed">{item.content || item.body}</p>
-              {item.image_url && <img src={item.image_url} alt={item.title} className="mt-3 rounded-lg max-h-48 object-cover" />}
+            <div key={item.id || i} style={{ background: 'white', borderRadius: '16px', padding: '20px', border: '1px solid #EEEEEE' }}>
+              <h2 style={{ fontSize: '16px', fontWeight: 600, color: COLORS.textPrimary }}>{item.title}</h2>
+              {item.created_at && <p style={{ fontSize: '12px', color: COLORS.textSecondary, marginTop: '8px' }}>{new Date(item.created_at).toLocaleDateString('pt-BR')}</p>}
+              <p style={{ color: COLORS.textSecondary, marginTop: '12px', fontSize: '14px', lineHeight: '1.6' }}>{item.content || item.body}</p>
+              {item.image_url && <img src={item.image_url} alt={item.title} style={{ marginTop: '12px', borderRadius: '8px', maxHeight: '192px', objectFit: 'cover', width: '100%' }} />}
             </div>
           ))}
         </div>
