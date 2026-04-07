@@ -1,0 +1,9 @@
+{
+  "name": "Leevin APP",
+  "short_name": "Leevin",
+  "start_url": ".",
+  "display": "standalone",
+  "background_color": "#1B4D3E",
+  "theme_color": "#1B4D3E",
+  "description": "Leevin APP Client Portal"
+}
