@@ -115,7 +115,9 @@ class MobileProfileUpdate(BaseModel):
 class MaintenanceRequestCreate(BaseModel):
     title: str
     description: str
-    priority: str  # "baixa", "media", "alta", "urgente"
+    priority: str = ""  # "baixa", "media", "alta", "urgente"
+    category: str = "maintenance"  # "maintenance", "cleaning", "plumbing", "electrical", "other"
+    urgency: str = "normal"  # "low", "normal", "high", "urgent"
     photos: List[str] = []  # list of URLs
 
 
@@ -709,18 +711,16 @@ def create_request(
 
     client = _get_client_from_user(db, current_user)
 
-    if not client.property_id:
-        raise HTTPException(
-            status_code=400,
-            detail="Cliente não tem propriedade associada"
-        )
+    # Map urgency from frontend to priority for DB
+    urgency_map = {"low": "baixa", "normal": "media", "high": "alta", "urgent": "urgente"}
+    effective_priority = req.priority if req.priority else urgency_map.get(req.urgency, "media")
 
     try:
         maintenance_req = MaintenanceRequest(
-            property_id=client.property_id,
+            property_id=client.property_id if client.property_id else None,
             title=req.title,
-            description=req.description,
-            priority=req.priority,
+            description=f"[{req.category}] {req.description}" if req.category else req.description,
+            priority=effective_priority,
             status="aberto",
             created_by=current_user.name
         )
@@ -734,6 +734,7 @@ def create_request(
             "description": maintenance_req.description,
             "status": maintenance_req.status,
             "priority": maintenance_req.priority,
+            "category": req.category,
             "created_at": maintenance_req.created_at,
             "message": "Solicitação criada com sucesso"
         }
