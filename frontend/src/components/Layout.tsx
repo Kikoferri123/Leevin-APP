@@ -6,59 +6,61 @@ import {
   Home, Users, FileSignature, FolderOpen, Bell, Settings, LogOut,
   Menu, X, ChevronDown, DollarSign, TrendingUp, Building2, BedDouble,
   CreditCard, Wrench, FileBarChart, HelpCircle, Wallet, Shield, AlertTriangle,
-  Newspaper, MessageSquare, Award, LogIn, Star, UserPlus, Palette
+  Newspaper, MessageSquare, Award, LogIn, Star, UserPlus, Palette, Globe
 } from 'lucide-react';
+import { useLanguage } from '../i18n/LanguageContext';
 
 const allNavItems = [
-  { path: '/', label: 'Dashboard', icon: LayoutDashboard, roles: ['admin', 'financeiro', 'operacional', 'visualizador'] },
-  { label: 'Financeiro', icon: DollarSign, roles: ['admin', 'financeiro', 'operacional'], children: [
-    { path: '/entradas', label: 'Entradas (In)', icon: ArrowDownCircle, roles: ['admin', 'financeiro', 'operacional'] },
-    { path: '/saidas', label: 'Saidas (Out)', icon: ArrowUpCircle, roles: ['admin', 'financeiro', 'operacional'] },
-    { path: '/pagamentos', label: 'Pagamentos', icon: CreditCard, roles: ['admin', 'financeiro', 'operacional'] },
-    { path: '/pnl-caixa', label: 'P&L Caixa', icon: FileText, roles: ['admin', 'financeiro'] },
-    { path: '/pnl-competencia', label: 'P&L Competencia', icon: TrendingUp, roles: ['admin', 'financeiro'] },
-    { path: '/depositos', label: 'Depositos', icon: Wallet, roles: ['admin', 'financeiro'] },
-    { path: '/inadimplencia', label: 'Inadimplencia', icon: AlertTriangle, roles: ['admin', 'financeiro'] },
+  { path: '/', labelKey: 'dashboard', icon: LayoutDashboard, roles: ['admin', 'financeiro', 'operacional', 'visualizador'] },
+  { labelKey: 'financial', icon: DollarSign, roles: ['admin', 'financeiro', 'operacional'], children: [
+    { path: '/entradas', labelKey: 'entriesIn', icon: ArrowDownCircle, roles: ['admin', 'financeiro', 'operacional'] },
+    { path: '/saidas', labelKey: 'entriesOut', icon: ArrowUpCircle, roles: ['admin', 'financeiro', 'operacional'] },
+    { path: '/pagamentos', labelKey: 'payments', icon: CreditCard, roles: ['admin', 'financeiro', 'operacional'] },
+    { path: '/pnl-caixa', labelKey: 'pnlCash', icon: FileText, roles: ['admin', 'financeiro'] },
+    { path: '/pnl-competencia', labelKey: 'pnlAccrual', icon: TrendingUp, roles: ['admin', 'financeiro'] },
+    { path: '/depositos', labelKey: 'deposits', icon: Wallet, roles: ['admin', 'financeiro'] },
+    { path: '/inadimplencia', labelKey: 'delinquency', icon: AlertTriangle, roles: ['admin', 'financeiro'] },
   ]},
-  { label: 'Propriedades', icon: Building2, roles: ['admin', 'financeiro', 'operacional', 'visualizador'], children: [
-    { path: '/propriedades', label: 'Lista', icon: Home, roles: ['admin', 'financeiro', 'operacional', 'visualizador'] },
-    { path: '/ranking', label: 'Ranking', icon: BarChart3, roles: ['admin', 'financeiro'] },
+  { labelKey: 'properties', icon: Building2, roles: ['admin', 'financeiro', 'operacional', 'visualizador'], children: [
+    { path: '/propriedades', labelKey: 'list', icon: Home, roles: ['admin', 'financeiro', 'operacional', 'visualizador'] },
+    { path: '/ranking', labelKey: 'ranking', icon: BarChart3, roles: ['admin', 'financeiro'] },
   ]},
-  { path: '/disponibilidade', label: 'Disponibilidade', icon: BedDouble, roles: ['admin', 'financeiro', 'operacional', 'visualizador'] },
-  { path: '/clientes', label: 'Clientes', icon: Users, roles: ['admin', 'financeiro', 'operacional', 'visualizador'] },
-  { path: '/landlords', label: 'Landlords', icon: Building2, roles: ['admin', 'financeiro'] },
-  { path: '/rh', label: 'RH', icon: Users, roles: ['admin'] },
-  { path: '/contratos', label: 'Contratos', icon: FileSignature, roles: ['admin', 'financeiro', 'operacional', 'visualizador'] },
-  { path: '/documentos', label: 'Documentos', icon: FolderOpen, roles: ['admin', 'financeiro', 'operacional', 'visualizador'] },
-  { path: '/manutencao', label: 'Pedidos / Manutencao', icon: Wrench, roles: ['admin', 'operacional'] },
-  { path: '/alertas', label: 'Alertas', icon: Bell, roles: ['admin', 'financeiro', 'operacional', 'visualizador'] },
-  { path: '/relatorios', label: 'Relatorios', icon: FileBarChart, roles: ['admin', 'financeiro'] },
-  { label: 'App Mobile', icon: Newspaper, roles: ['admin', 'operacional'], children: [
-    { path: '/admin/noticias', label: 'Noticias', icon: Newspaper, roles: ['admin', 'operacional'] },
-    { path: '/admin/mensagens', label: 'Mensagens', icon: MessageSquare, roles: ['admin', 'operacional'] },
-    { path: '/admin/recompensas', label: 'Recompensas', icon: Award, roles: ['admin', 'operacional'] },
-    { path: '/admin/checkins', label: 'Check-ins', icon: LogIn, roles: ['admin', 'operacional'] },
-    { path: '/admin/avaliacoes', label: 'Avaliacoes', icon: Star, roles: ['admin', 'operacional'] },
-    { path: '/admin/faq', label: 'FAQ', icon: HelpCircle, roles: ['admin', 'operacional'] },
-    { path: '/admin/indicacoes', label: 'Indicacoes', icon: UserPlus, roles: ['admin', 'operacional'] },
+  { path: '/disponibilidade', labelKey: 'availability', icon: BedDouble, roles: ['admin', 'financeiro', 'operacional', 'visualizador'] },
+  { path: '/clientes', labelKey: 'clients', icon: Users, roles: ['admin', 'financeiro', 'operacional', 'visualizador'] },
+  { path: '/landlords', labelKey: 'landlords', icon: Building2, roles: ['admin', 'financeiro'] },
+  { path: '/rh', labelKey: 'hr', icon: Users, roles: ['admin'] },
+  { path: '/contratos', labelKey: 'contracts', icon: FileSignature, roles: ['admin', 'financeiro', 'operacional', 'visualizador'] },
+  { path: '/documentos', labelKey: 'documents', icon: FolderOpen, roles: ['admin', 'financeiro', 'operacional', 'visualizador'] },
+  { path: '/manutencao', labelKey: 'maintenanceRequests', icon: Wrench, roles: ['admin', 'operacional'] },
+  { path: '/alertas', labelKey: 'alerts', icon: Bell, roles: ['admin', 'financeiro', 'operacional', 'visualizador'] },
+  { path: '/relatorios', labelKey: 'reports', icon: FileBarChart, roles: ['admin', 'financeiro'] },
+  { labelKey: 'mobileApp', icon: Newspaper, roles: ['admin', 'operacional'], children: [
+    { path: '/admin/noticias', labelKey: 'news', icon: Newspaper, roles: ['admin', 'operacional'] },
+    { path: '/admin/mensagens', labelKey: 'messages', icon: MessageSquare, roles: ['admin', 'operacional'] },
+    { path: '/admin/recompensas', labelKey: 'rewards', icon: Award, roles: ['admin', 'operacional'] },
+    { path: '/admin/checkins', labelKey: 'checkins', icon: LogIn, roles: ['admin', 'operacional'] },
+    { path: '/admin/avaliacoes', labelKey: 'reviews', icon: Star, roles: ['admin', 'operacional'] },
+    { path: '/admin/faq', labelKey: 'faq', icon: HelpCircle, roles: ['admin', 'operacional'] },
+    { path: '/admin/indicacoes', labelKey: 'referrals', icon: UserPlus, roles: ['admin', 'operacional'] },
   ]},
-  { path: '/branding', label: 'Marca / Branding', icon: Palette, roles: ['admin'] },
-  { path: '/ajuda', label: 'Ajuda', icon: HelpCircle, roles: ['admin', 'financeiro', 'operacional', 'visualizador'] },
-  { path: '/auditoria', label: 'Auditoria', icon: Shield, roles: ['admin'] },
-  { path: '/configuracoes', label: 'Configuracoes', icon: Settings, roles: ['admin'] },
+  { path: '/branding', labelKey: 'branding', icon: Palette, roles: ['admin'] },
+  { path: '/ajuda', labelKey: 'help', icon: HelpCircle, roles: ['admin', 'financeiro', 'operacional', 'visualizador'] },
+  { path: '/auditoria', labelKey: 'audit', icon: Shield, roles: ['admin'] },
+  { path: '/configuracoes', labelKey: 'settings', icon: Settings, roles: ['admin'] },
 ];
 
 export default function Layout({ children }: { children: React.ReactNode }) {
   const { user, logout } = useAuth();
+  const { ta, lang, setLang } = useLanguage();
   const location = useLocation();
   const navigate = useNavigate();
   const [sidebarOpen, setSidebarOpen] = useState(window.innerWidth >= 1024);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const [openGroups, setOpenGroups] = useState<string[]>(['Financeiro', 'Propriedades']);
+  const [openGroups, setOpenGroups] = useState<string[]>(['financial', 'properties']);
   const userRole = user?.role || 'visualizador';
 
   const toggleGroup = (label: string) => {
-    setOpenGroups(prev => prev.includes(label) ? prev.filter(g => g !== label) : [...prev, label]);
+    setOpenGroups(prev => prev.includes(label) ? prev.filter((g: string) => g !== label) : [...prev, label]);
   };
 
   const isActive = (path: string) => location.pathname === path;
@@ -96,16 +98,16 @@ export default function Layout({ children }: { children: React.ReactNode }) {
         <nav className="flex-1 overflow-y-auto py-4 px-3 space-y-1">
           {navItems.map((item: any) => {
             if (item.children) {
-              const isOpen = openGroups.includes(item.label);
+              const isOpen = openGroups.includes(item.labelKey);
               const Icon = item.icon;
               return (
-                <div key={item.label}>
-                  <button onClick={() => toggleGroup(item.label)}
+                <div key={item.labelKey}>
+                  <button onClick={() => toggleGroup(item.labelKey)}
                     className="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-slate-300 hover:bg-slate-700/50 transition-colors">
                     <Icon size={20} />
                     {sidebarOpen && (
                       <>
-                        <span className="flex-1 text-left text-sm">{item.label}</span>
+                        <span className="flex-1 text-left text-sm">{ta(item.labelKey as any)}</span>
                         <ChevronDown size={16} className={`transition-transform ${isOpen ? 'rotate-180' : ''}`} />
                       </>
                     )}
@@ -117,7 +119,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
                         return (
                           <Link key={child.path} to={child.path}
                             className={`flex items-center gap-3 px-3 py-2 rounded-lg text-sm transition-colors ${isActive(child.path) ? 'bg-blue-600 text-white' : 'text-slate-400 hover:bg-slate-700/50 hover:text-white'}`}>
-                            <ChildIcon size={16} /><span>{child.label}</span>
+                            <ChildIcon size={16} /><span>{ta(child.labelKey as any)}</span>
                           </Link>
                         );
                       })}
@@ -130,7 +132,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
             return (
               <Link key={item.path} to={item.path!}
                 className={`flex items-center gap-3 px-3 py-2.5 rounded-lg transition-colors ${isActive(item.path!) ? 'bg-blue-600 text-white' : 'text-slate-300 hover:bg-slate-700/50 hover:text-white'}`}>
-                <Icon size={20} />{sidebarOpen && <span className="text-sm">{item.label}</span>}
+                <Icon size={20} />{sidebarOpen && <span className="text-sm">{ta(item.labelKey as any)}</span>}
               </Link>
             );
           })}
@@ -138,7 +140,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
         <div className="p-4 border-t border-slate-700">
           <div className="flex items-center gap-3">
             <div className="w-8 h-8 rounded-full bg-blue-500 flex items-center justify-center text-sm font-bold shrink-0 cursor-pointer hover:bg-blue-400 transition-colors"
-              onClick={() => navigate('/perfil')} title="Meu Perfil">
+              onClick={() => navigate('/perfil')} title={ta('profile')}>
               {user?.name?.charAt(0) || 'U'}
             </div>
             {sidebarOpen && (
@@ -147,7 +149,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
                 <p className="text-xs text-slate-400 capitalize">{user?.role}</p>
               </div>
             )}
-            <button onClick={logout} className="text-slate-400 hover:text-white p-1" title="Sair"><LogOut size={18} /></button>
+            <button onClick={logout} className="text-slate-400 hover:text-white p-1" title={ta('logout')}><LogOut size={18} /></button>
           </div>
         </div>
       </aside>
@@ -163,9 +165,20 @@ export default function Layout({ children }: { children: React.ReactNode }) {
             {(sidebarOpen || mobileMenuOpen) ? <X size={20} /> : <Menu size={20} />}
           </button>
           <div className="flex items-center gap-4">
+            {/* Language Switcher */}
+            <div className="flex items-center bg-gray-100 rounded-full p-1 gap-1">
+              <button onClick={() => setLang('pt')}
+                className={`px-3 py-1 rounded-full text-xs font-semibold transition-all ${lang === 'pt' ? 'bg-blue-600 text-white' : 'text-gray-500 hover:text-gray-700'}`}>
+                PT
+              </button>
+              <button onClick={() => setLang('en')}
+                className={`px-3 py-1 rounded-full text-xs font-semibold transition-all ${lang === 'en' ? 'bg-blue-600 text-white' : 'text-gray-500 hover:text-gray-700'}`}>
+                EN
+              </button>
+            </div>
             <span className="text-xs px-2 py-1 rounded-full bg-blue-100 text-blue-700 font-medium capitalize">{userRole}</span>
             <div className="text-sm text-gray-500">
-              {new Date().toLocaleDateString('pt-BR', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}
+              {new Date().toLocaleDateString(lang === 'pt' ? 'pt-BR' : 'en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}
             </div>
           </div>
         </header>

@@ -1,22 +1,28 @@
 import React, { createContext, useContext, useState, useCallback, ReactNode } from 'react';
 import pt from './pt';
 import en from './en';
+import pt_admin from './pt_admin';
+import en_admin from './en_admin';
 
 type Lang = 'pt' | 'en';
-type Translations = typeof pt;
+type ClientTranslations = typeof pt;
+type AdminTranslations = typeof pt_admin;
 
 interface LanguageContextType {
   lang: Lang;
   setLang: (lang: Lang) => void;
-  t: (key: keyof Translations) => string;
+  t: (key: keyof ClientTranslations) => string;
+  ta: (key: keyof AdminTranslations) => string;
 }
 
-const translations: Record<Lang, Translations> = { pt, en };
+const clientTranslations: Record<Lang, ClientTranslations> = { pt, en };
+const adminTranslations: Record<Lang, AdminTranslations> = { pt: pt_admin, en: en_admin };
 
 const LanguageContext = createContext<LanguageContextType>({
   lang: 'pt',
   setLang: () => {},
   t: (key) => key as string,
+  ta: (key) => key as string,
 });
 
 export function LanguageProvider({ children }: { children: ReactNode }) {
@@ -30,12 +36,16 @@ export function LanguageProvider({ children }: { children: ReactNode }) {
     localStorage.setItem('leevin_lang', l);
   }, []);
 
-  const t = useCallback((key: keyof Translations): string => {
-    return translations[lang][key] || key as string;
+  const t = useCallback((key: keyof ClientTranslations): string => {
+    return clientTranslations[lang][key] || key as string;
+  }, [lang]);
+
+  const ta = useCallback((key: keyof AdminTranslations): string => {
+    return adminTranslations[lang][key] || key as string;
   }, [lang]);
 
   return (
-    <LanguageContext.Provider value={{ lang, setLang, t }}>
+    <LanguageContext.Provider value={{ lang, setLang, t, ta }}>
       {children}
     </LanguageContext.Provider>
   );
