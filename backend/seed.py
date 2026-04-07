@@ -20,6 +20,10 @@ users_data = [
     ("Maria Financeiro", "maria@leevin.app", "maria123", UserRole.FINANCEIRO),
     ("Joao Operacional", "joao@leevin.app", "joao123", UserRole.OPERACIONAL),
     ("Ana Viewer", "ana@leevin.app", "ana123", UserRole.VISUALIZADOR),
+    # Client users for portal access
+    ("Lucas Silva", "lucas@email.com", "lucas123", UserRole.CLIENTE),
+    ("Ana Costa", "ana.costa@email.com", "ana123", UserRole.CLIENTE),
+    ("Pedro Martins", "pedro@email.com", "pedro123", UserRole.CLIENTE),
 ]
 users = []
 for name, email, pwd, role in users_data:
@@ -219,3 +223,7 @@ print("  Admin: admin@leevin.app / admin123")
 print("  Financeiro: maria@leevin.app / maria123")
 print("  Operacional: joao@leevin.app / joao123")
 print("  Visualizador: ana@leevin.app / ana123")
+print("\nClient Portal credentials:")
+print("  Cliente: lucas@email.com / lucas123")
+print("  Cliente: ana.costa@email.com / ana123")
+print("  Cliente: pedro@email.com / pedro123")
