@@ -17,7 +17,7 @@ const COLORS = {
 
 export default function ClientProfile() {
   const { refreshUser } = useAuth();
-  const { t, lang } = useLanguage();
+  const { t, lang, setLang } = useLanguage();
   const [profile, setProfile] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
@@ -99,6 +99,33 @@ export default function ClientProfile() {
             <label style={{ display: 'block', fontSize: '14px', fontWeight: 500, color: COLORS.textPrimary, marginBottom: '8px' }}>{t('birthDate')}</label>
             <input type="date" value={form.birth_date} onChange={e => setForm({...form, birth_date: e.target.value})}
               style={{ width: '100%', padding: '8px 12px', border: `1px solid #EEEEEE`, borderRadius: '8px', fontSize: '14px', fontFamily: 'inherit' }} />
+          </div>
+
+          {/* Language selector */}
+          <div>
+            <label style={{ display: 'block', fontSize: '14px', fontWeight: 500, color: COLORS.textPrimary, marginBottom: '8px' }}>{t('language')}</label>
+            <div style={{ display: 'flex', gap: '12px' }}>
+              <button type="button" onClick={() => setLang('pt')}
+                style={{
+                  flex: 1, padding: '12px', border: lang === 'pt' ? `2px solid ${COLORS.primary}` : '2px solid #EEEEEE',
+                  borderRadius: '12px', background: lang === 'pt' ? 'rgba(27,77,62,0.05)' : 'white',
+                  cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px',
+                  fontSize: '14px', fontWeight: lang === 'pt' ? 600 : 400, color: lang === 'pt' ? COLORS.primary : COLORS.textSecondary,
+                  transition: 'all 0.2s'
+                }}>
+                <span style={{ fontSize: '20px' }}>🇧🇷</span> Portugues
+              </button>
+              <button type="button" onClick={() => setLang('en')}
+                style={{
+                  flex: 1, padding: '12px', border: lang === 'en' ? `2px solid ${COLORS.primary}` : '2px solid #EEEEEE',
+                  borderRadius: '12px', background: lang === 'en' ? 'rgba(27,77,62,0.05)' : 'white',
+                  cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px',
+                  fontSize: '14px', fontWeight: lang === 'en' ? 600 : 400, color: lang === 'en' ? COLORS.primary : COLORS.textSecondary,
+                  transition: 'all 0.2s'
+                }}>
+                <span style={{ fontSize: '20px' }}>🇬🇧</span> English
+              </button>
+            </div>
           </div>
 
           <button type="submit" disabled={saving}
