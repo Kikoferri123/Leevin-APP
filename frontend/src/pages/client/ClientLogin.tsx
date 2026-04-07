@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useAuth } from '../../contexts/AuthContext';
 import { useNavigate, Link } from 'react-router-dom';
+import { useLanguage } from '../../i18n/LanguageContext';
 
 export default function ClientLogin() {
   const [email, setEmail] = useState('');
@@ -10,6 +11,7 @@ export default function ClientLogin() {
   const [loading, setLoading] = useState(false);
   const { clientLogin } = useAuth();
   const navigate = useNavigate();
+  const { t, lang, setLang } = useLanguage();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -19,13 +21,50 @@ export default function ClientLogin() {
       await clientLogin(email, password);
       navigate('/cliente');
     } catch (err: any) {
-      setError(err.response?.data?.detail || 'Email ou senha incorretos');
+      setError(err.response?.data?.detail || (lang === 'pt' ? 'Email ou senha incorretos' : 'Invalid email or password'));
     }
     setLoading(false);
   };
 
   return (
-    <div style={{ minHeight: '100vh', background: '#F5F5F0', display: 'flex', alignItems: 'center', justifyContent: 'center', fontFamily: "'Inter', sans-serif", padding: 24 }}>
+    <div style={{ minHeight: '100vh', background: '#F5F5F0', display: 'flex', alignItems: 'center', justifyContent: 'center', fontFamily: "'Inter', sans-serif", padding: 24, position: 'relative' }}>
+      {/* Language toggle */}
+      <div style={{ position: 'fixed', top: 20, right: 24, display: 'flex', gap: 4, zIndex: 1000 }}>
+        <button
+          onClick={() => setLang('pt')}
+          style={{
+            padding: '8px 12px',
+            border: 'none',
+            borderRadius: 4,
+            fontSize: 13,
+            fontWeight: 600,
+            cursor: 'pointer',
+            background: lang === 'pt' ? '#1B4D3E' : 'transparent',
+            color: lang === 'pt' ? 'white' : '#757575',
+            transition: 'all 0.2s'
+          }}
+        >
+          PT
+        </button>
+        <span style={{ color: '#BDBDBD', padding: '8px 4px' }}>|</span>
+        <button
+          onClick={() => setLang('en')}
+          style={{
+            padding: '8px 12px',
+            border: 'none',
+            borderRadius: 4,
+            fontSize: 13,
+            fontWeight: 600,
+            cursor: 'pointer',
+            background: lang === 'en' ? '#1B4D3E' : 'transparent',
+            color: lang === 'en' ? 'white' : '#757575',
+            transition: 'all 0.2s'
+          }}
+        >
+          EN
+        </button>
+      </div>
+
       <div style={{ width: '100%', maxWidth: 440 }}>
         {/* House icon */}
         <div style={{ textAlign: 'center', marginBottom: 24 }}>
@@ -37,8 +76,8 @@ export default function ClientLogin() {
         </div>
 
         {/* Title */}
-        <h1 style={{ textAlign: 'center', fontSize: 28, fontWeight: 700, color: '#212121', margin: 0, fontFamily: "'Poppins', 'Inter', sans-serif" }}>Welcome Back</h1>
-        <p style={{ textAlign: 'center', color: '#757575', fontSize: 14, marginTop: 6, marginBottom: 32 }}>Log in to manage your property and contracts</p>
+        <h1 style={{ textAlign: 'center', fontSize: 28, fontWeight: 700, color: '#212121', margin: 0, fontFamily: "'Poppins', 'Inter', sans-serif" }}>{t('welcomeBack')}</h1>
+        <p style={{ textAlign: 'center', color: '#757575', fontSize: 14, marginTop: 6, marginBottom: 32 }}>{t('signInToContinue')}</p>
 
         {/* Error */}
         {error && (
@@ -56,7 +95,7 @@ export default function ClientLogin() {
             </div>
             <input
               type="email" value={email} onChange={e => setEmail(e.target.value)} required
-              placeholder="Enter your email"
+              placeholder={t('email')}
               style={{ width: '100%', padding: '16px 16px 16px 48px', border: '1.5px solid #BDBDBD', borderRadius: 28, fontSize: 15, background: 'white', boxSizing: 'border-box', outline: 'none', color: '#212121' }}
               onFocus={e => e.target.style.borderColor = '#1B4D3E'}
               onBlur={e => e.target.style.borderColor = '#BDBDBD'}
@@ -70,7 +109,7 @@ export default function ClientLogin() {
             </div>
             <input
               type={showPassword ? 'text' : 'password'} value={password} onChange={e => setPassword(e.target.value)} required
-              placeholder="Enter your password"
+              placeholder={t('password')}
               style={{ width: '100%', padding: '16px 48px 16px 48px', border: '1.5px solid #BDBDBD', borderRadius: 28, fontSize: 15, background: 'white', boxSizing: 'border-box', outline: 'none', color: '#212121' }}
               onFocus={e => e.target.style.borderColor = '#1B4D3E'}
               onBlur={e => e.target.style.borderColor = '#BDBDBD'}
@@ -87,7 +126,7 @@ export default function ClientLogin() {
 
           {/* Forgot password */}
           <div style={{ textAlign: 'right', marginBottom: 24 }}>
-            <span style={{ color: '#212121', fontSize: 13, cursor: 'pointer', fontWeight: 500 }}>Forgot password?</span>
+            <span style={{ color: '#212121', fontSize: 13, cursor: 'pointer', fontWeight: 500 }}>{t('forgotPassword')}</span>
           </div>
 
           {/* Login button */}
@@ -97,14 +136,14 @@ export default function ClientLogin() {
               background: loading ? '#2D7A62' : 'linear-gradient(135deg, #1B4D3E 0%, #2D7A62 100%)',
               fontFamily: "'Poppins', 'Inter', sans-serif", transition: 'all 0.2s'
             }}>
-            {loading ? 'Logging in...' : 'Login'}
+            {loading ? `${t('login')}...` : t('login')}
           </button>
         </form>
 
         {/* Divider */}
         <div style={{ display: 'flex', alignItems: 'center', gap: 12, margin: '24px 0' }}>
           <div style={{ flex: 1, height: 1, background: '#BDBDBD' }} />
-          <span style={{ color: '#757575', fontSize: 13 }}>or continue with</span>
+          <span style={{ color: '#757575', fontSize: 13 }}>{t('orContinueWith')}</span>
           <div style={{ flex: 1, height: 1, background: '#BDBDBD' }} />
         </div>
 
@@ -122,12 +161,12 @@ export default function ClientLogin() {
 
         {/* Register link */}
         <p style={{ textAlign: 'center', marginTop: 24, color: '#757575', fontSize: 14 }}>
-          Don't have an account? <Link to="/cliente/register" style={{ color: '#1B4D3E', fontWeight: 600, textDecoration: 'none' }}>Register</Link>
+          {t('dontHaveAccount')} <Link to="/cliente/register" style={{ color: '#1B4D3E', fontWeight: 600, textDecoration: 'none' }}>{t('register')}</Link>
         </p>
 
         {/* Admin link */}
         <p style={{ textAlign: 'center', marginTop: 8, fontSize: 13 }}>
-          <Link to="/login" style={{ color: '#757575', textDecoration: 'none' }}>Admin Access →</Link>
+          <Link to="/login" style={{ color: '#757575', textDecoration: 'none' }}>{`${t('adminAccess')} →`}</Link>
         </p>
       </div>
     </div>

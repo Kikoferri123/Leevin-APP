@@ -1,5 +1,6 @@
 import React, { useEffect, useState, useRef } from 'react';
 import { getClientDocuments, uploadClientDocument } from '../../services/api';
+import { useLanguage } from '../../i18n/LanguageContext';
 import { FolderOpen, Upload, FileText, Download } from 'lucide-react';
 
 const COLORS = {
@@ -14,6 +15,7 @@ const COLORS = {
 };
 
 export default function ClientDocuments() {
+  const { t } = useLanguage();
   const [documents, setDocuments] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [uploading, setUploading] = useState(false);
@@ -42,17 +44,17 @@ export default function ClientDocuments() {
     if (fileRef.current) fileRef.current.value = '';
   };
 
-  if (loading) return <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '256px', color: COLORS.textSecondary }}>Carregando...</div>;
+  if (loading) return <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '256px', color: COLORS.textSecondary }}>{t('loading')}</div>;
 
   return (
     <div>
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '24px' }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
           <FolderOpen size={24} style={{ color: COLORS.primary }} />
-          <h1 style={{ fontSize: '22px', fontWeight: 700, color: COLORS.textPrimary, fontFamily: "'Poppins', 'Inter', sans-serif" }}>Meus Documentos</h1>
+          <h1 style={{ fontSize: '22px', fontWeight: 700, color: COLORS.textPrimary, fontFamily: "'Poppins', 'Inter', sans-serif" }}>{t('myDocuments')}</h1>
         </div>
         <label style={{ padding: '8px 16px', background: `linear-gradient(135deg, ${COLORS.primary} 0%, #2D7A62 100%)`, color: 'white', borderRadius: '8px', display: 'flex', alignItems: 'center', gap: '8px', fontSize: '14px', fontWeight: 500, cursor: 'pointer', opacity: uploading ? 0.5 : 1, transition: 'opacity 0.2s' }}>
-          <Upload size={16} />{uploading ? 'Enviando...' : 'Enviar Documento'}
+          <Upload size={16} />{uploading ? t('uploading') : t('uploadDocument')}
           <input type="file" ref={fileRef} onChange={handleUpload} style={{ display: 'none' }} disabled={uploading} />
         </label>
       </div>
@@ -60,7 +62,7 @@ export default function ClientDocuments() {
       {documents.length === 0 ? (
         <div style={{ background: 'white', borderRadius: '16px', padding: '32px', textAlign: 'center', border: '1px solid #EEEEEE' }}>
           <FolderOpen size={48} style={{ color: '#D0D0D0', margin: '0 auto 12px' }} />
-          <p style={{ color: COLORS.textSecondary }}>Nenhum documento encontrado</p>
+          <p style={{ color: COLORS.textSecondary }}>{t('noDocuments')}</p>
         </div>
       ) : (
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))', gap: '16px' }}>

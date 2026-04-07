@@ -1,8 +1,10 @@
 import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { clientRegister } from '../../services/api';
+import { useLanguage } from '../../i18n/LanguageContext';
 
 export default function ClientRegister() {
+  const { t, lang } = useLanguage();
   const [form, setForm] = useState({ name: '', email: '', password: '', confirmPassword: '', phone: '', nationality: '', birth_date: '' });
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirm, setShowConfirm] = useState(false);
@@ -13,15 +15,15 @@ export default function ClientRegister() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (form.password !== form.confirmPassword) { setError('Passwords do not match'); return; }
-    if (!agreed) { setError('You must agree to the Terms & Conditions'); return; }
+    if (form.password !== form.confirmPassword) { setError(lang === 'pt' ? 'Senhas nao coincidem' : 'Passwords do not match'); return; }
+    if (!agreed) { setError(lang === 'pt' ? 'Voce deve aceitar os Termos e Condicoes' : 'You must agree to the Terms & Conditions'); return; }
     setError('');
     setLoading(true);
     try {
       await clientRegister({ name: form.name, email: form.email, password: form.password, phone: form.phone, nationality: form.nationality, birth_date: form.birth_date || undefined });
       navigate('/cliente/login');
     } catch (err: any) {
-      setError(err.response?.data?.detail || 'Erro ao criar conta');
+      setError(err.response?.data?.detail || (lang === 'pt' ? 'Erro ao criar conta' : 'Failed to create account'));
     }
     setLoading(false);
   };
@@ -37,8 +39,8 @@ export default function ClientRegister() {
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><polyline points="15,18 9,12 15,6"/></svg>
         </Link>
 
-        <h1 style={{ fontSize: 28, fontWeight: 700, color: '#212121', margin: 0, fontFamily: "'Poppins', 'Inter', sans-serif" }}>Create Account</h1>
-        <p style={{ color: '#757575', fontSize: 14, marginTop: 6, marginBottom: 24 }}>Join Leevin APP today</p>
+        <h1 style={{ fontSize: 28, fontWeight: 700, color: '#212121', margin: 0, fontFamily: "'Poppins', 'Inter', sans-serif" }}>{t('createAccount')}</h1>
+        <p style={{ color: '#757575', fontSize: 14, marginTop: 6, marginBottom: 24 }}>{t('joinLeevin')}</p>
 
         {error && <div style={{ background: '#D32F2F', color: 'white', padding: '12px 16px', borderRadius: 8, fontSize: 14, marginBottom: 16 }}>{error}</div>}
 
@@ -46,21 +48,21 @@ export default function ClientRegister() {
           {/* Full Name */}
           <div style={{ position: 'relative', marginBottom: 14 }}>
             <div style={iconStyle}><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></div>
-            <input type="text" value={form.name} onChange={e => setForm({...form, name: e.target.value})} required placeholder="Full Name" style={inputStyle}
+            <input type="text" value={form.name} onChange={e => setForm({...form, name: e.target.value})} required placeholder={t('fullName')} style={inputStyle}
               onFocus={e => e.target.style.borderColor = '#1B4D3E'} onBlur={e => e.target.style.borderColor = '#BDBDBD'} />
           </div>
 
           {/* Email */}
           <div style={{ position: 'relative', marginBottom: 14 }}>
             <div style={iconStyle}><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg></div>
-            <input type="email" value={form.email} onChange={e => setForm({...form, email: e.target.value})} required placeholder="Email Address" style={inputStyle}
+            <input type="email" value={form.email} onChange={e => setForm({...form, email: e.target.value})} required placeholder={t('email')} style={inputStyle}
               onFocus={e => e.target.style.borderColor = '#1B4D3E'} onBlur={e => e.target.style.borderColor = '#BDBDBD'} />
           </div>
 
           {/* Password */}
           <div style={{ position: 'relative', marginBottom: 14 }}>
             <div style={iconStyle}><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg></div>
-            <input type={showPassword ? 'text' : 'password'} value={form.password} onChange={e => setForm({...form, password: e.target.value})} required placeholder="Password" style={{...inputStyle, paddingRight: 48}}
+            <input type={showPassword ? 'text' : 'password'} value={form.password} onChange={e => setForm({...form, password: e.target.value})} required placeholder={t('password')} style={{...inputStyle, paddingRight: 48}}
               onFocus={e => e.target.style.borderColor = '#1B4D3E'} onBlur={e => e.target.style.borderColor = '#BDBDBD'} />
             <button type="button" onClick={() => setShowPassword(!showPassword)} style={{ position: 'absolute', right: 16, top: '50%', transform: 'translateY(-50%)', background: 'none', border: 'none', cursor: 'pointer', color: '#757575', padding: 0 }}>
               <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M17.94 17.94A10.07 10.07 0 0112 20c-7 0-11-8-11-8a18.45 18.45 0 015.06-5.94M9.9 4.24A9.12 9.12 0 0112 4c7 0 11 8 11 8a18.5 18.5 0 01-2.16 3.19m-6.72-1.07a3 3 0 11-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/></svg>
@@ -70,7 +72,7 @@ export default function ClientRegister() {
           {/* Confirm Password */}
           <div style={{ position: 'relative', marginBottom: 14 }}>
             <div style={iconStyle}><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg></div>
-            <input type={showConfirm ? 'text' : 'password'} value={form.confirmPassword} onChange={e => setForm({...form, confirmPassword: e.target.value})} required placeholder="Confirm Password" style={{...inputStyle, paddingRight: 48}}
+            <input type={showConfirm ? 'text' : 'password'} value={form.confirmPassword} onChange={e => setForm({...form, confirmPassword: e.target.value})} required placeholder={t('confirmPassword')} style={{...inputStyle, paddingRight: 48}}
               onFocus={e => e.target.style.borderColor = '#1B4D3E'} onBlur={e => e.target.style.borderColor = '#BDBDBD'} />
             <button type="button" onClick={() => setShowConfirm(!showConfirm)} style={{ position: 'absolute', right: 16, top: '50%', transform: 'translateY(-50%)', background: 'none', border: 'none', cursor: 'pointer', color: '#757575', padding: 0 }}>
               <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M17.94 17.94A10.07 10.07 0 0112 20c-7 0-11-8-11-8a18.45 18.45 0 015.06-5.94"/><line x1="1" y1="1" x2="23" y2="23"/></svg>
@@ -80,42 +82,42 @@ export default function ClientRegister() {
           {/* Phone */}
           <div style={{ position: 'relative', marginBottom: 14 }}>
             <div style={iconStyle}><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07 19.5 19.5 0 01-6-6 19.79 19.79 0 01-3.07-8.67A2 2 0 014.11 2h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L8.09 9.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 16.92z"/></svg></div>
-            <input type="tel" value={form.phone} onChange={e => setForm({...form, phone: e.target.value})} placeholder="Phone Number" style={inputStyle}
+            <input type="tel" value={form.phone} onChange={e => setForm({...form, phone: e.target.value})} placeholder={t('phone')} style={inputStyle}
               onFocus={e => e.target.style.borderColor = '#1B4D3E'} onBlur={e => e.target.style.borderColor = '#BDBDBD'} />
           </div>
 
           {/* Nationality */}
           <div style={{ position: 'relative', marginBottom: 14 }}>
             <div style={iconStyle}><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 014 10 15.3 15.3 0 01-4 10 15.3 15.3 0 01-4-10 15.3 15.3 0 014-10z"/></svg></div>
-            <input type="text" value={form.nationality} onChange={e => setForm({...form, nationality: e.target.value})} placeholder="Select Nationality" style={inputStyle}
+            <input type="text" value={form.nationality} onChange={e => setForm({...form, nationality: e.target.value})} placeholder={t('nationality')} style={inputStyle}
               onFocus={e => e.target.style.borderColor = '#1B4D3E'} onBlur={e => e.target.style.borderColor = '#BDBDBD'} />
           </div>
 
           {/* Birth Date */}
           <div style={{ position: 'relative', marginBottom: 16 }}>
             <div style={iconStyle}><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg></div>
-            <input type="date" value={form.birth_date} onChange={e => setForm({...form, birth_date: e.target.value})} placeholder="Birth Date" style={inputStyle}
+            <input type="date" value={form.birth_date} onChange={e => setForm({...form, birth_date: e.target.value})} placeholder={t('birthDate')} style={inputStyle}
               onFocus={e => e.target.style.borderColor = '#1B4D3E'} onBlur={e => e.target.style.borderColor = '#BDBDBD'} />
           </div>
 
           {/* Terms */}
           <label style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 20, cursor: 'pointer', fontSize: 14, color: '#424242' }}>
             <input type="checkbox" checked={agreed} onChange={e => setAgreed(e.target.checked)} style={{ width: 18, height: 18, accentColor: '#1B4D3E' }} />
-            I agree to the <span style={{ color: '#1B4D3E', fontWeight: 600 }}>Terms & Conditions</span>
+            {t('agreeToTerms')} <span style={{ color: '#1B4D3E', fontWeight: 600 }}>{t('termsAndConditions')}</span>
           </label>
 
           {/* Submit */}
           <button type="submit" disabled={loading}
             style={{ width: '100%', padding: 16, border: 'none', borderRadius: 28, fontSize: 16, fontWeight: 600, cursor: loading ? 'not-allowed' : 'pointer', color: 'white',
               background: loading ? '#2D7A62' : 'linear-gradient(135deg, #1B4D3E 0%, #2D7A62 100%)', fontFamily: "'Poppins', 'Inter', sans-serif" }}>
-            {loading ? 'Creating...' : 'Create Account'}
+            {loading ? `${t('createAccount')}...` : t('createAccount')}
           </button>
         </form>
 
         {/* Divider */}
         <div style={{ display: 'flex', alignItems: 'center', gap: 12, margin: '24px 0' }}>
           <div style={{ flex: 1, height: 1, background: '#BDBDBD' }} />
-          <span style={{ color: '#757575', fontSize: 13 }}>or register with</span>
+          <span style={{ color: '#757575', fontSize: 13 }}>{t('orContinueWith')}</span>
           <div style={{ flex: 1, height: 1, background: '#BDBDBD' }} />
         </div>
 
@@ -132,7 +134,7 @@ export default function ClientRegister() {
         </div>
 
         <p style={{ textAlign: 'center', marginTop: 24, color: '#757575', fontSize: 14 }}>
-          Already have an account? <Link to="/cliente/login" style={{ color: '#1B4D3E', fontWeight: 600, textDecoration: 'none' }}>Login</Link>
+          {t('alreadyHaveAccount')} <Link to="/cliente/login" style={{ color: '#1B4D3E', fontWeight: 600, textDecoration: 'none' }}>{t('signIn')}</Link>
         </p>
       </div>
     </div>

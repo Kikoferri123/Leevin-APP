@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { getClientPayments } from '../../services/api';
 import { CreditCard, CheckCircle, Clock, AlertTriangle } from 'lucide-react';
+import { useLanguage } from '../../i18n/LanguageContext';
 
 const COLORS = {
   primary: '#1B4D3E',
@@ -14,6 +15,7 @@ const COLORS = {
 };
 
 export default function ClientPayments() {
+  const { t, lang } = useLanguage();
   const [payments, setPayments] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -30,13 +32,13 @@ export default function ClientPayments() {
   }, []);
 
   const statusIcon = (status: string) => {
-    if (status === 'paid' || status === 'pago') return <span style={{ display: 'flex', alignItems: 'center', gap: '4px', color: COLORS.success }}><CheckCircle size={14} />Pago</span>;
-    if (status === 'pending' || status === 'pendente') return <span style={{ display: 'flex', alignItems: 'center', gap: '4px', color: COLORS.warning }}><Clock size={14} />Pendente</span>;
-    if (status === 'overdue' || status === 'atrasado') return <span style={{ display: 'flex', alignItems: 'center', gap: '4px', color: COLORS.error }}><AlertTriangle size={14} />Atrasado</span>;
+    if (status === 'paid' || status === 'pago') return <span style={{ display: 'flex', alignItems: 'center', gap: '4px', color: COLORS.success }}><CheckCircle size={14} />{t('paid')}</span>;
+    if (status === 'pending' || status === 'pendente') return <span style={{ display: 'flex', alignItems: 'center', gap: '4px', color: COLORS.warning }}><Clock size={14} />{t('pending')}</span>;
+    if (status === 'overdue' || status === 'atrasado') return <span style={{ display: 'flex', alignItems: 'center', gap: '4px', color: COLORS.error }}><AlertTriangle size={14} />{lang === 'pt' ? 'Atrasado' : 'Overdue'}</span>;
     return <span style={{ color: COLORS.textSecondary }}>{status}</span>;
   };
 
-  if (loading) return <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '256px', color: COLORS.textSecondary }}>Carregando...</div>;
+  if (loading) return <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '256px', color: COLORS.textSecondary }}>{t('loading')}</div>;
 
   // Calculate summary
   const totalPaid = payments.filter(p => p.status === 'paid' || p.status === 'pago').reduce((s, p) => s + (p.amount || p.value || 0), 0);
@@ -47,21 +49,21 @@ export default function ClientPayments() {
     <div>
       <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '24px' }}>
         <CreditCard size={24} style={{ color: COLORS.primary }} />
-        <h1 style={{ fontSize: '22px', fontWeight: 700, color: COLORS.textPrimary, fontFamily: "'Poppins', 'Inter', sans-serif" }}>Meus Pagamentos</h1>
+        <h1 style={{ fontSize: '22px', fontWeight: 700, color: COLORS.textPrimary, fontFamily: "'Poppins', 'Inter', sans-serif" }}>{t('paymentsTitle')}</h1>
       </div>
 
       {/* Summary cards */}
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))', gap: '16px', marginBottom: '24px' }}>
         <div style={{ background: 'white', borderRadius: '16px', padding: '16px', border: '1px solid #EEEEEE' }}>
-          <p style={{ fontSize: '14px', color: COLORS.textSecondary }}>Total Pago</p>
+          <p style={{ fontSize: '14px', color: COLORS.textSecondary }}>{lang === 'pt' ? 'Total Pago' : 'Total Paid'}</p>
           <p style={{ fontSize: '18px', fontWeight: 700, color: COLORS.success }}>EUR {totalPaid.toFixed(2)}</p>
         </div>
         <div style={{ background: 'white', borderRadius: '16px', padding: '16px', border: '1px solid #EEEEEE' }}>
-          <p style={{ fontSize: '14px', color: COLORS.textSecondary }}>Pendente</p>
+          <p style={{ fontSize: '14px', color: COLORS.textSecondary }}>{t('pending')}</p>
           <p style={{ fontSize: '18px', fontWeight: 700, color: COLORS.warning }}>EUR {totalPending.toFixed(2)}</p>
         </div>
         <div style={{ background: 'white', borderRadius: '16px', padding: '16px', border: '1px solid #EEEEEE' }}>
-          <p style={{ fontSize: '14px', color: COLORS.textSecondary }}>Atrasado</p>
+          <p style={{ fontSize: '14px', color: COLORS.textSecondary }}>{lang === 'pt' ? 'Atrasado' : 'Overdue'}</p>
           <p style={{ fontSize: '18px', fontWeight: 700, color: COLORS.error }}>EUR {totalOverdue.toFixed(2)}</p>
         </div>
       </div>
@@ -69,16 +71,16 @@ export default function ClientPayments() {
       {payments.length === 0 ? (
         <div style={{ background: 'white', borderRadius: '16px', padding: '32px', textAlign: 'center', border: '1px solid #EEEEEE' }}>
           <CreditCard size={48} style={{ color: '#D0D0D0', margin: '0 auto 12px' }} />
-          <p style={{ color: COLORS.textSecondary }}>Nenhum pagamento encontrado</p>
+          <p style={{ color: COLORS.textSecondary }}>{t('noPayments')}</p>
         </div>
       ) : (
         <div style={{ background: 'white', borderRadius: '16px', border: '1px solid #EEEEEE', overflow: 'hidden' }}>
           <table style={{ width: '100%', fontSize: '14px' }}>
             <thead style={{ background: '#F5F5F0', borderBottom: `1px solid #EEEEEE` }}>
               <tr>
-                <th style={{ textAlign: 'left', padding: '12px 16px', fontWeight: 500, color: COLORS.textSecondary }}>Data</th>
-                <th style={{ textAlign: 'left', padding: '12px 16px', fontWeight: 500, color: COLORS.textSecondary }}>Descricao</th>
-                <th style={{ textAlign: 'right', padding: '12px 16px', fontWeight: 500, color: COLORS.textSecondary }}>Valor</th>
+                <th style={{ textAlign: 'left', padding: '12px 16px', fontWeight: 500, color: COLORS.textSecondary }}>{lang === 'pt' ? 'Data' : 'Date'}</th>
+                <th style={{ textAlign: 'left', padding: '12px 16px', fontWeight: 500, color: COLORS.textSecondary }}>{lang === 'pt' ? 'Descricao' : 'Description'}</th>
+                <th style={{ textAlign: 'right', padding: '12px 16px', fontWeight: 500, color: COLORS.textSecondary }}>{t('amount')}</th>
                 <th style={{ textAlign: 'center', padding: '12px 16px', fontWeight: 500, color: COLORS.textSecondary }}>Status</th>
               </tr>
             </thead>

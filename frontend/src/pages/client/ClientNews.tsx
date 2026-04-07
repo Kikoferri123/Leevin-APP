@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { getClientNews } from '../../services/api';
+import { useLanguage } from '../../i18n/LanguageContext';
 import { Newspaper } from 'lucide-react';
 
 const COLORS = {
@@ -14,6 +15,7 @@ const COLORS = {
 };
 
 export default function ClientNews() {
+  const { t } = useLanguage();
   const [news, setNews] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -29,19 +31,19 @@ export default function ClientNews() {
     load();
   }, []);
 
-  if (loading) return <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '256px', color: COLORS.textSecondary }}>Carregando...</div>;
+  if (loading) return <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '256px', color: COLORS.textSecondary }}>{t('loading')}</div>;
 
   return (
     <div>
       <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '24px' }}>
         <Newspaper size={24} style={{ color: COLORS.primary }} />
-        <h1 style={{ fontSize: '22px', fontWeight: 700, color: COLORS.textPrimary, fontFamily: "'Poppins', 'Inter', sans-serif" }}>Noticias</h1>
+        <h1 style={{ fontSize: '22px', fontWeight: 700, color: COLORS.textPrimary, fontFamily: "'Poppins', 'Inter', sans-serif" }}>{t('newsTitle')}</h1>
       </div>
 
       {news.length === 0 ? (
         <div style={{ background: 'white', borderRadius: '16px', padding: '32px', textAlign: 'center', border: '1px solid #EEEEEE' }}>
           <Newspaper size={48} style={{ color: '#D0D0D0', margin: '0 auto 12px' }} />
-          <p style={{ color: COLORS.textSecondary }}>Nenhuma noticia no momento</p>
+          <p style={{ color: COLORS.textSecondary }}>{t('noNews')}</p>
         </div>
       ) : (
         <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>

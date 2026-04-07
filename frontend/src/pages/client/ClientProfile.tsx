@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { getClientPortalProfile, updateClientPortalProfile } from '../../services/api';
 import { useAuth } from '../../contexts/AuthContext';
+import { useLanguage } from '../../i18n/LanguageContext';
 import { User, Save, CheckCircle } from 'lucide-react';
 
 const COLORS = {
@@ -16,6 +17,7 @@ const COLORS = {
 
 export default function ClientProfile() {
   const { refreshUser } = useAuth();
+  const { t, lang } = useLanguage();
   const [profile, setProfile] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
@@ -53,55 +55,55 @@ export default function ClientProfile() {
     setSaving(false);
   };
 
-  if (loading) return <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '256px', color: COLORS.textSecondary }}>Carregando...</div>;
+  if (loading) return <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '256px', color: COLORS.textSecondary }}>{t('loading')}</div>;
 
   return (
     <div style={{ maxWidth: '512px' }}>
       <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '24px' }}>
         <User size={24} style={{ color: COLORS.primary }} />
-        <h1 style={{ fontSize: '22px', fontWeight: 700, color: COLORS.textPrimary, fontFamily: "'Poppins', 'Inter', sans-serif" }}>Meu Perfil</h1>
+        <h1 style={{ fontSize: '22px', fontWeight: 700, color: COLORS.textPrimary, fontFamily: "'Poppins', 'Inter', sans-serif" }}>{t('myProfile')}</h1>
       </div>
 
       <div style={{ background: 'white', borderRadius: '16px', padding: '24px', border: '1px solid #EEEEEE' }}>
         {saved && (
           <div style={{ marginBottom: '16px', padding: '12px', background: `rgba(${parseInt(COLORS.success.slice(1, 3), 16)}, ${parseInt(COLORS.success.slice(3, 5), 16)}, ${parseInt(COLORS.success.slice(5, 7), 16)}, 0.1)`, border: `1px solid ${COLORS.success}`, color: COLORS.success, borderRadius: '8px', display: 'flex', alignItems: 'center', gap: '8px', fontSize: '14px' }}>
-            <CheckCircle size={16} /> Perfil atualizado com sucesso!
+            <CheckCircle size={16} /> {lang === 'pt' ? 'Perfil atualizado com sucesso!' : 'Profile updated successfully!'}
           </div>
         )}
 
         <form onSubmit={handleSave} style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
           <div>
-            <label style={{ display: 'block', fontSize: '14px', fontWeight: 500, color: COLORS.textPrimary, marginBottom: '8px' }}>Nome Completo</label>
+            <label style={{ display: 'block', fontSize: '14px', fontWeight: 500, color: COLORS.textPrimary, marginBottom: '8px' }}>{t('fullName')}</label>
             <input type="text" value={form.name} onChange={e => setForm({...form, name: e.target.value})}
               style={{ width: '100%', padding: '8px 12px', border: `1px solid #EEEEEE`, borderRadius: '8px', fontSize: '14px', fontFamily: 'inherit' }} />
           </div>
           <div>
-            <label style={{ display: 'block', fontSize: '14px', fontWeight: 500, color: COLORS.textPrimary, marginBottom: '8px' }}>Email</label>
+            <label style={{ display: 'block', fontSize: '14px', fontWeight: 500, color: COLORS.textPrimary, marginBottom: '8px' }}>{t('email')}</label>
             <input type="email" value={form.email} onChange={e => setForm({...form, email: e.target.value})}
               style={{ width: '100%', padding: '8px 12px', border: `1px solid #EEEEEE`, borderRadius: '8px', fontSize: '14px', background: '#F5F5F0', fontFamily: 'inherit', cursor: 'not-allowed' }} disabled />
-            <p style={{ fontSize: '12px', color: COLORS.textSecondary, marginTop: '8px' }}>Email nao pode ser alterado</p>
+            <p style={{ fontSize: '12px', color: COLORS.textSecondary, marginTop: '8px' }}>{lang === 'pt' ? 'Email nao pode ser alterado' : 'Email cannot be changed'}</p>
           </div>
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
             <div>
-              <label style={{ display: 'block', fontSize: '14px', fontWeight: 500, color: COLORS.textPrimary, marginBottom: '8px' }}>Telefone</label>
+              <label style={{ display: 'block', fontSize: '14px', fontWeight: 500, color: COLORS.textPrimary, marginBottom: '8px' }}>{t('phoneNumber')}</label>
               <input type="tel" value={form.phone} onChange={e => setForm({...form, phone: e.target.value})}
                 style={{ width: '100%', padding: '8px 12px', border: `1px solid #EEEEEE`, borderRadius: '8px', fontSize: '14px', fontFamily: 'inherit' }} placeholder="+351 xxx xxx xxx" />
             </div>
             <div>
-              <label style={{ display: 'block', fontSize: '14px', fontWeight: 500, color: COLORS.textPrimary, marginBottom: '8px' }}>Nacionalidade</label>
+              <label style={{ display: 'block', fontSize: '14px', fontWeight: 500, color: COLORS.textPrimary, marginBottom: '8px' }}>{t('nationality')}</label>
               <input type="text" value={form.nationality} onChange={e => setForm({...form, nationality: e.target.value})}
                 style={{ width: '100%', padding: '8px 12px', border: `1px solid #EEEEEE`, borderRadius: '8px', fontSize: '14px', fontFamily: 'inherit' }} placeholder="Portuguesa" />
             </div>
           </div>
           <div>
-            <label style={{ display: 'block', fontSize: '14px', fontWeight: 500, color: COLORS.textPrimary, marginBottom: '8px' }}>Data de Nascimento</label>
+            <label style={{ display: 'block', fontSize: '14px', fontWeight: 500, color: COLORS.textPrimary, marginBottom: '8px' }}>{t('birthDate')}</label>
             <input type="date" value={form.birth_date} onChange={e => setForm({...form, birth_date: e.target.value})}
               style={{ width: '100%', padding: '8px 12px', border: `1px solid #EEEEEE`, borderRadius: '8px', fontSize: '14px', fontFamily: 'inherit' }} />
           </div>
 
           <button type="submit" disabled={saving}
             style={{ width: '100%', padding: '10px 16px', background: `linear-gradient(135deg, ${COLORS.primary} 0%, #2D7A62 100%)`, color: 'white', borderRadius: '8px', border: 'none', cursor: 'pointer', fontWeight: 500, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', opacity: saving ? 0.5 : 1, transition: 'opacity 0.2s' }}>
-            <Save size={16} />{saving ? 'Salvando...' : 'Salvar Alteracoes'}
+            <Save size={16} />{saving ? `${t('save')}...` : (lang === 'pt' ? 'Salvar Alteracoes' : 'Save Changes')}
           </button>
         </form>
       </div>
@@ -109,12 +111,12 @@ export default function ClientProfile() {
       {/* Additional info */}
       {profile && (
         <div style={{ marginTop: '24px', background: 'white', borderRadius: '16px', padding: '24px', border: '1px solid #EEEEEE' }}>
-          <h2 style={{ fontWeight: 600, color: COLORS.textPrimary, marginBottom: '12px' }}>Informacoes da Conta</h2>
+          <h2 style={{ fontWeight: 600, color: COLORS.textPrimary, marginBottom: '12px' }}>{lang === 'pt' ? 'Informacoes da Conta' : 'Account Information'}</h2>
           <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', fontSize: '14px' }}>
-            {profile.property_name && <div style={{ display: 'flex', justifyContent: 'space-between' }}><span style={{ color: COLORS.textSecondary }}>Propriedade</span><span style={{ color: COLORS.textPrimary }}>{profile.property_name}</span></div>}
+            {profile.property_name && <div style={{ display: 'flex', justifyContent: 'space-between' }}><span style={{ color: COLORS.textSecondary }}>{lang === 'pt' ? 'Propriedade' : 'Property'}</span><span style={{ color: COLORS.textPrimary }}>{profile.property_name}</span></div>}
             {profile.check_in && <div style={{ display: 'flex', justifyContent: 'space-between' }}><span style={{ color: COLORS.textSecondary }}>Check-in</span><span style={{ color: COLORS.textPrimary }}>{new Date(profile.check_in).toLocaleDateString('pt-BR')}</span></div>}
             {profile.check_out && <div style={{ display: 'flex', justifyContent: 'space-between' }}><span style={{ color: COLORS.textSecondary }}>Check-out</span><span style={{ color: COLORS.textPrimary }}>{new Date(profile.check_out).toLocaleDateString('pt-BR')}</span></div>}
-            {profile.document_id && <div style={{ display: 'flex', justifyContent: 'space-between' }}><span style={{ color: COLORS.textSecondary }}>Documento</span><span style={{ color: COLORS.textPrimary }}>{profile.document_id}</span></div>}
+            {profile.document_id && <div style={{ display: 'flex', justifyContent: 'space-between' }}><span style={{ color: COLORS.textSecondary }}>{lang === 'pt' ? 'Documento' : 'Document'}</span><span style={{ color: COLORS.textPrimary }}>{profile.document_id}</span></div>}
           </div>
         </div>
       )}

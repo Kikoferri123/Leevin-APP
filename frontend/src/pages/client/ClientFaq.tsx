@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { getClientFaq } from '../../services/api';
+import { useLanguage } from '../../i18n/LanguageContext';
 import { HelpCircle, ChevronDown } from 'lucide-react';
 
 const COLORS = {
@@ -14,6 +15,7 @@ const COLORS = {
 };
 
 export default function ClientFaq() {
+  const { t } = useLanguage();
   const [faqs, setFaqs] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [openId, setOpenId] = useState<number | null>(null);
@@ -30,19 +32,19 @@ export default function ClientFaq() {
     load();
   }, []);
 
-  if (loading) return <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '256px', color: COLORS.textSecondary }}>Carregando...</div>;
+  if (loading) return <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '256px', color: COLORS.textSecondary }}>{t('loading')}</div>;
 
   return (
     <div style={{ maxWidth: '512px' }}>
       <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '24px' }}>
         <HelpCircle size={24} style={{ color: COLORS.primary }} />
-        <h1 style={{ fontSize: '22px', fontWeight: 700, color: COLORS.textPrimary, fontFamily: "'Poppins', 'Inter', sans-serif" }}>Perguntas Frequentes</h1>
+        <h1 style={{ fontSize: '22px', fontWeight: 700, color: COLORS.textPrimary, fontFamily: "'Poppins', 'Inter', sans-serif" }}>{t('faqTitle')}</h1>
       </div>
 
       {faqs.length === 0 ? (
         <div style={{ background: 'white', borderRadius: '16px', padding: '32px', textAlign: 'center', border: '1px solid #EEEEEE' }}>
           <HelpCircle size={48} style={{ color: '#D0D0D0', margin: '0 auto 12px' }} />
-          <p style={{ color: COLORS.textSecondary }}>Nenhuma FAQ disponivel</p>
+          <p style={{ color: COLORS.textSecondary }}>{t('noFaq')}</p>
         </div>
       ) : (
         <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
