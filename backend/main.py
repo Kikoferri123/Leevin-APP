@@ -240,6 +240,9 @@ def startup():
             db.add(admin)
             _seed_settings(db)
             db.commit()
+
+        # Auto-seed client users for portal access
+        _seed_client_users(db)
     finally:
         db.close()
 
@@ -308,6 +311,37 @@ def _seed_settings(db):
         db.add(Setting(key=f"cat_out_{cat.lower().replace(' ', '_')}", value=cat, category="categories_out"))
     for pm in payment_methods:
         db.add(Setting(key=f"pm_{pm.lower().replace(' ', '_')}", value=pm, category="payment_methods"))
+
+
+def _seed_client_users(db):
+    """Create CLIENTE role users for portal login if they don't exist."""
+    client_users = [
+        ("Lucas Silva", "lucas@email.com", "lucas123"),
+        ("Ana Costa", "ana.costa@email.com", "ana123"),
+        ("Pedro Martins", "pedro@email.com", "pedro123"),
+    ]
+    for name, email, pwd in client_users:
+        existing = db.query(User).filter(User.email == email).first()
+        if not existing:
+            u = User(
+                name=name,
+                email=email,
+                password_hash=get_password_hash(pwd),
+                role=UserRole.CLIENTE,
+                active=True
+            )
+            db.add(u)
+    db.commit()
+
+
+@app.get("/seed-run")
+def run_seed():
+    """Run the full seed script to populate demo data."""
+    try:
+        import seed
+        return {"status": "ok", "message": "Seed executed successfully"}
+    except Exception as e:
+        return {"status": "error", "message": str(e)}
 
 
 @app.get("/")
