@@ -510,6 +510,37 @@ def update_profile(
 
 
 # ────────────────────────────────────────────────────────
+# 5b. PUT /mobile/change-password - Change password
+# ────────────────────────────────────────────────────────
+
+class ChangePasswordRequest(BaseModel):
+    current_password: str
+    new_password: str
+
+@router.put("/change-password")
+def change_password(
+    req: ChangePasswordRequest,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user)
+):
+    """Change the current user's password."""
+    if current_user.role != UserRole.CLIENTE:
+        raise HTTPException(status_code=403, detail="Apenas clientes podem acessar este endpoint")
+
+    # Validate current password
+    if not current_user.password_hash or not verify_password(req.current_password, current_user.password_hash):
+        raise HTTPException(status_code=400, detail="Senha atual incorreta")
+
+    # Validate new password strength
+    if len(req.new_password) < 6:
+        raise HTTPException(status_code=400, detail="A nova senha deve ter pelo menos 6 caracteres")
+
+    current_user.password_hash = get_password_hash(req.new_password)
+    db.commit()
+    return {"message": "Senha alterada com sucesso"}
+
+
+# ────────────────────────────────────────────────────────
 # 6. GET /mobile/contracts - List my contracts
 # ────────────────────────────────────────────────────────
 

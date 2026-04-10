@@ -210,6 +210,7 @@ export const updateBranding = (data: any) => api.put('/branding', data);
 // Client Auth
 export const clientLogin = (email: string, password: string) => api.post('/mobile/login', { email, password });
 export const clientRegister = (data: any) => api.post('/mobile/register', data);
+export const changeClientPassword = (currentPassword: string, newPassword: string) => api.put('/mobile/change-password', { current_password: currentPassword, new_password: newPassword });
 
 // Client Profile
 export const getClientPortalProfile = () => api.get('/mobile/profile');

@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from 'react';
-import { getClientPortalProfile, updateClientPortalProfile } from '../../services/api';
+import { getClientPortalProfile, updateClientPortalProfile, changeClientPassword } from '../../services/api';
 import { useAuth } from '../../contexts/AuthContext';
 import { useLanguage } from '../../i18n/LanguageContext';
-import { User, Save, CheckCircle } from 'lucide-react';
+import { User, Save, CheckCircle, Lock, Eye, EyeOff } from 'lucide-react';
 
 const COLORS = {
   primary: '#1B4D3E',
@@ -23,6 +23,12 @@ export default function ClientProfile() {
   const [saving, setSaving] = useState(false);
   const [saved, setSaved] = useState(false);
   const [form, setForm] = useState({ name: '', email: '', phone: '', nationality: '', birth_date: '' });
+  const [pwForm, setPwForm] = useState({ current_password: '', new_password: '', confirm_password: '' });
+  const [pwSaving, setPwSaving] = useState(false);
+  const [pwMsg, setPwMsg] = useState('');
+  const [pwError, setPwError] = useState('');
+  const [showCurrentPw, setShowCurrentPw] = useState(false);
+  const [showNewPw, setShowNewPw] = useState(false);
 
   useEffect(() => {
     const load = async () => {
@@ -131,6 +137,64 @@ export default function ClientProfile() {
           <button type="submit" disabled={saving}
             style={{ width: '100%', padding: '10px 16px', background: `linear-gradient(135deg, ${COLORS.primary} 0%, #2D7A62 100%)`, color: 'white', borderRadius: '8px', border: 'none', cursor: 'pointer', fontWeight: 500, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', opacity: saving ? 0.5 : 1, transition: 'opacity 0.2s' }}>
             <Save size={16} />{saving ? `${t('save')}...` : (lang === 'pt' ? 'Salvar Alteracoes' : 'Save Changes')}
+          </button>
+        </form>
+      </div>
+
+      {/* Change Password */}
+      <div style={{ marginTop: '24px', background: 'white', borderRadius: '16px', padding: '24px', border: '1px solid #EEEEEE' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '16px' }}>
+          <Lock size={18} style={{ color: COLORS.primary }} />
+          <h2 style={{ fontWeight: 600, color: COLORS.textPrimary, margin: 0 }}>{lang === 'pt' ? 'Alterar Senha' : 'Change Password'}</h2>
+        </div>
+        {pwMsg && <div style={{ marginBottom: '12px', padding: '10px', background: 'rgba(56,142,60,0.1)', border: `1px solid ${COLORS.success}`, color: COLORS.success, borderRadius: '8px', fontSize: '13px', display: 'flex', alignItems: 'center', gap: '6px' }}><CheckCircle size={14} />{pwMsg}</div>}
+        {pwError && <div style={{ marginBottom: '12px', padding: '10px', background: 'rgba(211,47,47,0.1)', border: `1px solid ${COLORS.error}`, color: COLORS.error, borderRadius: '8px', fontSize: '13px' }}>{pwError}</div>}
+        <form onSubmit={async (e) => {
+          e.preventDefault();
+          setPwMsg(''); setPwError('');
+          if (pwForm.new_password !== pwForm.confirm_password) {
+            setPwError(lang === 'pt' ? 'As senhas nao coincidem' : 'Passwords do not match');
+            return;
+          }
+          if (pwForm.new_password.length < 6) {
+            setPwError(lang === 'pt' ? 'A senha deve ter pelo menos 6 caracteres' : 'Password must be at least 6 characters');
+            return;
+          }
+          setPwSaving(true);
+          try {
+            await changeClientPassword(pwForm.current_password, pwForm.new_password);
+            setPwMsg(lang === 'pt' ? 'Senha alterada com sucesso!' : 'Password changed successfully!');
+            setPwForm({ current_password: '', new_password: '', confirm_password: '' });
+            setTimeout(() => setPwMsg(''), 4000);
+          } catch (err: any) {
+            setPwError(err.response?.data?.detail || (lang === 'pt' ? 'Erro ao alterar senha' : 'Error changing password'));
+          }
+          setPwSaving(false);
+        }} style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+          <div style={{ position: 'relative' }}>
+            <label style={{ display: 'block', fontSize: '13px', fontWeight: 500, color: COLORS.textPrimary, marginBottom: '6px' }}>{lang === 'pt' ? 'Senha Atual' : 'Current Password'}</label>
+            <input type={showCurrentPw ? 'text' : 'password'} value={pwForm.current_password} onChange={e => setPwForm({...pwForm, current_password: e.target.value})} required
+              style={{ width: '100%', padding: '8px 36px 8px 12px', border: '1px solid #EEEEEE', borderRadius: '8px', fontSize: '14px', boxSizing: 'border-box' }} />
+            <button type="button" onClick={() => setShowCurrentPw(!showCurrentPw)} style={{ position: 'absolute', right: '8px', top: '30px', background: 'none', border: 'none', cursor: 'pointer', color: COLORS.textSecondary }}>
+              {showCurrentPw ? <EyeOff size={16} /> : <Eye size={16} />}
+            </button>
+          </div>
+          <div style={{ position: 'relative' }}>
+            <label style={{ display: 'block', fontSize: '13px', fontWeight: 500, color: COLORS.textPrimary, marginBottom: '6px' }}>{lang === 'pt' ? 'Nova Senha' : 'New Password'}</label>
+            <input type={showNewPw ? 'text' : 'password'} value={pwForm.new_password} onChange={e => setPwForm({...pwForm, new_password: e.target.value})} required
+              style={{ width: '100%', padding: '8px 36px 8px 12px', border: '1px solid #EEEEEE', borderRadius: '8px', fontSize: '14px', boxSizing: 'border-box' }} />
+            <button type="button" onClick={() => setShowNewPw(!showNewPw)} style={{ position: 'absolute', right: '8px', top: '30px', background: 'none', border: 'none', cursor: 'pointer', color: COLORS.textSecondary }}>
+              {showNewPw ? <EyeOff size={16} /> : <Eye size={16} />}
+            </button>
+          </div>
+          <div>
+            <label style={{ display: 'block', fontSize: '13px', fontWeight: 500, color: COLORS.textPrimary, marginBottom: '6px' }}>{lang === 'pt' ? 'Confirmar Nova Senha' : 'Confirm New Password'}</label>
+            <input type="password" value={pwForm.confirm_password} onChange={e => setPwForm({...pwForm, confirm_password: e.target.value})} required
+              style={{ width: '100%', padding: '8px 12px', border: '1px solid #EEEEEE', borderRadius: '8px', fontSize: '14px', boxSizing: 'border-box' }} />
+          </div>
+          <button type="submit" disabled={pwSaving}
+            style={{ width: '100%', padding: '10px', background: COLORS.primary, color: 'white', borderRadius: '8px', border: 'none', cursor: 'pointer', fontWeight: 500, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', opacity: pwSaving ? 0.5 : 1 }}>
+            <Lock size={14} />{pwSaving ? '...' : (lang === 'pt' ? 'Alterar Senha' : 'Change Password')}
           </button>
         </form>
       </div>
