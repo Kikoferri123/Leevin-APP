@@ -358,10 +358,9 @@ def send_contract_email(contract_id: int, data: EmailRequest, request: Request, 
     buf = _generate_contract_pdf(contract, client, prop, db)
     pdf_bytes = buf.read()
 
-    resend_key = os.getenv("RESEND_API_KEY", "")
-    from_email = os.getenv("EMAIL_FROM", "Leevin APP <onboarding@resend.dev>")
+    from services.email_service import send_email, EMAIL_PASSWORD
 
-    if not resend_key:
+    if not EMAIL_PASSWORD:
         return {
             "success": False,
             "message": f"Email nao configurado. Link de assinatura: {sign_link}",
@@ -371,44 +370,40 @@ def send_contract_email(contract_id: int, data: EmailRequest, request: Request, 
 
     try:
         client_name = client.name.replace(' ', '_') if client else 'contrato'
-        default_body = (
-            f"Dear {client.name if client else 'Client'},\n\n"
-            f"Please find attached your Licence Agreement with Leevin APP.\n\n"
-            f"To sign your contract digitally, please click the link below:\n"
-            f"{sign_link}\n\n"
-            f"Best regards,\n"
-            f"Leevin APP Service and Management LTD"
-        )
-        body = data.message or default_body
-        if data.message and sign_link not in data.message:
-            body += f"\n\nLink para assinar o contrato: {sign_link}"
 
-        pdf_b64 = b64.b64encode(pdf_bytes).decode()
+        html_body = f"""
+        <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+            <div style="background-color: #1e3a5f; padding: 20px; text-align: center;">
+                <h1 style="color: white; margin: 0;">Leevin APP</h1>
+                <p style="color: #aec6e8; margin: 5px 0 0;">Service and Management LTD</p>
+            </div>
+            <div style="padding: 30px 20px;">
+                <p>Dear <b>{client.name if client else 'Client'}</b>,</p>
+                <p>Please find attached your Licence Agreement with Leevin APP.</p>
+                <p>To sign your contract digitally, please click the button below:</p>
+                <div style="text-align: center; margin: 25px 0;">
+                    <a href="{sign_link}" style="background-color: #1e3a5f; color: white; padding: 12px 30px; text-decoration: none; border-radius: 6px; font-weight: bold;">
+                        Sign Contract Online
+                    </a>
+                </div>
+                <p style="font-size: 12px; color: #888;">Or copy this link: {sign_link}</p>
+                <p>Best regards,<br><b>Leevin APP Service and Management LTD</b></p>
+            </div>
+        </div>
+        """
 
-        payload = {
-            "from": from_email,
-            "to": [data.to_email],
-            "subject": data.subject or "Leevin APP - Licence Agreement",
-            "text": body,
-            "attachments": [
-                {
-                    "filename": f"Licence_Agreement_{client_name}.pdf",
-                    "content": pdf_b64,
-                }
-            ]
-        }
-
-        resp = httpx.post(
-            "https://api.resend.com/emails",
-            json=payload,
-            headers={"Authorization": f"Bearer {resend_key}"},
-            timeout=30
+        result = send_email(
+            to=data.to_email,
+            subject=data.subject or "Leevin APP - Licence Agreement",
+            html_body=html_body,
+            attachment_bytes=pdf_bytes,
+            attachment_filename=f"Licence_Agreement_{client_name}.pdf",
         )
 
-        if resp.status_code in (200, 201):
+        if result["success"]:
             return {"success": True, "message": f"Email enviado para {data.to_email}", "sign_link": sign_link}
         else:
-            return {"success": False, "message": f"Erro Resend ({resp.status_code}): {resp.text}", "sign_link": sign_link}
+            return {"success": False, "message": f"Erro ao enviar: {result.get('error', 'Unknown')}", "sign_link": sign_link}
     except Exception as e:
         return {"success": False, "message": f"Erro ao enviar: {str(e)}", "sign_link": sign_link}
 
